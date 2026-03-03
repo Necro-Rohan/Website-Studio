@@ -9,6 +9,7 @@ export default function AdminDashboard() {
   });
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState(null);
+  const [secretKey, setSecretKey] = useState("");
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -21,7 +22,12 @@ export default function AdminDashboard() {
     setMessage(null);
 
     try {
-      const response = await api.post("/generate", formData);
+      const response = await api.post("/generate", formData,
+        { headers: {
+          "x-admin-secret": secretKey,
+          },
+        }
+      );
       setMessage({
         type: "success",
         text:
@@ -41,7 +47,7 @@ export default function AdminDashboard() {
 
   return (
     <div className="bg-[#f6f6f8] text-slate-900 min-h-screen flex flex-col items-center py-10">
-      <div className="w-full max-w-[800px] px-6">
+      <div className="w-full max-w-200 px-6">
         <h1 className="text-3xl font-black mb-2">SEO Page Generator</h1>
         <p className="text-slate-500 mb-8">
           Enter parameters to generate programmatic SEO pages.
@@ -97,6 +103,20 @@ export default function AdminDashboard() {
               }
               className="w-full px-4 py-3 rounded-lg border bg-slate-50 focus:ring-2 focus:ring-blue-500 disabled:opacity-50"
               placeholder="e.g., New York, Mumbai"
+            />
+          </div>
+          <div className="pt-4 border-t border-slate-200 mt-2">
+            <label className="block text-sm font-semibold mb-2 text-red-600">
+              Admin Secret Key
+            </label>
+            <input
+              type="password"
+              required
+              disabled={loading}
+              value={secretKey}
+              onChange={(e) => setSecretKey(e.target.value)}
+              className="w-full px-4 py-3 rounded-lg border border-red-200 bg-red-50 focus:ring-2 focus:ring-red-500 disabled:opacity-50"
+              placeholder="Enter the secret key"
             />
           </div>
           <button

@@ -48,7 +48,7 @@ export default function BlogPage() {
               <span className="block w-5 h-5 bg-white rounded-sm"></span>
             </div>
             <span className="text-lg font-bold tracking-tight">
-              websites.co.in
+              Instaweb Labs
             </span>
           </div>
           <a

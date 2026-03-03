@@ -10,6 +10,7 @@ dotenv.config();
 import connectDb from './db.js';
 import aiRoute from './src/routes/aiRoutes.js';
 import frontendRoutes from './src/routes/frontendRoutes.js';
+import indexingRoutes from "./src/routes/indexingRoutes.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -25,10 +26,6 @@ app.use((req, res, next) => {
   next();
 });
 
-app.use((req, res, next) => {
-  console.log(`[NETWORK SPY] Request received: ${req.method} ${req.url}`);
-  next();
-});
 
 app.use('/api', aiRoute);
 
@@ -38,6 +35,9 @@ app.use(express.static(path.resolve(__dirname, '../frontend/dist'), { index: fal
 
 // Blog page ka SEO injection 
 app.use('/', frontendRoutes);
+
+// Automatically handles /sitemap.xml, /llms.txt, and /robots.txt
+app.use("/", indexingRoutes);
 
 // Fallback Route 
 app.get(/^(.*)$/, (req, res) => {
