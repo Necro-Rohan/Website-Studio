@@ -68,10 +68,8 @@ export default function HomePage() {
       <header className="sticky top-0 z-50 w-full border-b border-slate-200 bg-white/95 backdrop-blur-sm shadow-sm">
         <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-6">
           <div className="flex items-center gap-2">
-            <div className="bg-blue-600 text-white p-1 rounded">
-              <span className="block w-5 h-5 bg-white rounded-sm"></span>
-            </div>
-            <span className="text-xl font-black tracking-tight">Instaweb Labs</span>
+            <img src='/InstaWeb-Labs-icon.svg' className='w-8 h-8'/>
+            <span className="text-xl font-black tracking-tight">InstaWeb Labs</span>
           </div>
           <a
             href="https://websites.co.in"

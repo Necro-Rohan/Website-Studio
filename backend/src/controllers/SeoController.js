@@ -15,7 +15,7 @@ export const renderSeoBlogPage = async (req, res) => {
     let htmlData = fs.readFileSync(indexPath, 'utf8');
 
     if (post) {
-      // 1. Build a comprehensive SEO block with Schema and Open Graph
+      // a comprehensive SEO block with Schema and Open Graph
       const seoTags = `
         <title>${post.metaTitle}</title>
         <meta name="description" content="${post.metaDescription}" />
@@ -36,13 +36,13 @@ export const renderSeoBlogPage = async (req, res) => {
         </script>
       `;
 
-      // 2. Strip out the default Vite title and inject the new block before </head>
+      // Strip out the default Vite title and inject the new block before </head>
       htmlData = htmlData
-        .replace('<title>frontend</title>', '') 
-        .replace('</head>', `${seoTags}\n</head>`);
+        .replace("<title>InstaWeb Labs</title>", "")
+        .replace("</head>", `${seoTags}\n</head>`);
         
     } else {
-      htmlData = htmlData.replace('<title>frontend</title>', `<title>Post Not Found - Websites.co.in</title>`);
+      htmlData = htmlData.replace('<title>InstaWeb Labs</title>', `<title>Post Not Found - InstaWeb Labs</title>`);
     }
 
     res.send(htmlData);
