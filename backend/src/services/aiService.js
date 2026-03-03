@@ -45,10 +45,13 @@ export async function generateSEOContent(adjective, category, geography) {
     const response = await genAI.models.generateContent({
       model: "gemini-2.5-flash",
       contents: prompt,
+      config: {
+        responseMimeType: "application/json",
+      },
     });
 
     // const result = await model.generateContent(prompt);
-    const responseText = response.text();
+    const responseText = response.text;
     
     // JSON parse karke bhej raha hoon taaki backend sidha save kar sake
     return JSON.parse(responseText);

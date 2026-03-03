@@ -20,6 +20,16 @@ app.use(cors());
 
 connectDb();
 
+app.use((req, res, next) => {
+  console.log("Backend hit:", req.method, req.url);
+  next();
+});
+
+app.use((req, res, next) => {
+  console.log(`[NETWORK SPY] Request received: ${req.method} ${req.url}`);
+  next();
+});
+
 app.use('/api', aiRoute);
 
 // Frontend Serving & SEO Magic 
@@ -34,5 +44,5 @@ app.get(/^(.*)$/, (req, res) => {
   res.sendFile(path.resolve(__dirname, '../frontend/dist/index.html'));
 });
 
-const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => console.log(`Engine running on port http://localhost:${PORT}`));
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, '127.0.0.1', () => console.log(`Engine running on port http://127.0.0.1:${PORT}`));

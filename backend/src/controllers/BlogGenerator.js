@@ -1,7 +1,7 @@
 import BlogPost from "../models/BlogPost.model.js";
 import { generateSEOContent } from "../services/aiService.js";
 
-const BlogGenerator = async (req, res) => {
+export const BlogGenerator = async (req, res) => {
   const { adjective, category, geography } = req.body;
 
   if (!adjective || !category || !geography) {
@@ -37,4 +37,17 @@ const BlogGenerator = async (req, res) => {
   }
 };
 
-export default BlogGenerator;
+export const getBlogPost = async (req, res) => {
+  try {
+    const post = await BlogPost.findOne({ slug: req.params.slug });
+
+    if (!post) {
+      return res.status(404).json({ error: "Post not found" });
+    }
+
+    res.json(post);
+  } catch (error) {
+    console.error("Error fetching post:", error);
+    res.status(500).json({ error: "Internal server error" });
+  }
+};

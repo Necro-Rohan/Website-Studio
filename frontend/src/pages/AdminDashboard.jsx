@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import axios from "axios";
+import api from "../utils/api.js"
 
 export default function AdminDashboard() {
   const [formData, setFormData] = useState({
@@ -21,7 +21,7 @@ export default function AdminDashboard() {
     setMessage(null);
 
     try {
-      const response = await axios.post("/api/generate", formData);
+      const response = await api.post("/generate", formData);
       setMessage({
         type: "success",
         text:
