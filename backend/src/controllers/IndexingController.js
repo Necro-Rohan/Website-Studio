@@ -1,10 +1,13 @@
-import BlogPost from '../models/BlogPost.model.js';
+import BlogPost from "../models/BlogPost.model.js";
 
 // the standard XML Sitemap for Google
 export const generateSitemap = async (req, res) => {
   try {
-    const posts = await BlogPost.find({ status: 'published' }).select('slug updatedAt');
-    const baseUrl = `${req.protocol}://${req.get('host')}`;
+    const posts = await BlogPost.find({ status: "published" }).select(
+      "slug updatedAt",
+    );
+    const protocol = req.headers["x-forwarded-proto"] || req.protocol;
+    const baseUrl = `${protocol}://${req.get("host")}`;
 
     let sitemap = `<?xml version="1.0" encoding="UTF-8"?>\n`;
     sitemap += `<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n`;
@@ -24,7 +27,7 @@ export const generateSitemap = async (req, res) => {
 
     sitemap += `</urlset>`;
 
-    res.header('Content-Type', 'application/xml');
+    res.header("Content-Type", "application/xml");
     res.send(sitemap);
   } catch (error) {
     console.error("Sitemap generation error:", error);
@@ -35,8 +38,11 @@ export const generateSitemap = async (req, res) => {
 // the llms.txt file for AI Crawlers (ChatGPT, Claude, Gemini)
 export const generateLlmsTxt = async (req, res) => {
   try {
-    const posts = await BlogPost.find({ status: 'published' }).select('slug h1 metaDescription');
-    const baseUrl = `${req.protocol}://${req.get('host')}`;
+    const posts = await BlogPost.find({ status: "published" }).select(
+      "slug h1 metaDescription",
+    );
+   const protocol = req.headers["x-forwarded-proto"] || req.protocol;
+   const baseUrl = `${protocol}://${req.get("host")}`;
 
     let llmsText = `# Websites.co.in AI Blog Directory\n\n`;
     llmsText += `This document provides a directory of our SEO-optimized guides for local businesses.\n\n`;
@@ -46,7 +52,7 @@ export const generateLlmsTxt = async (req, res) => {
       llmsText += `- [${post.h1}](${baseUrl}/blog/${post.slug}): ${post.metaDescription}\n`;
     });
 
-    res.header('Content-Type', 'text/plain');
+    res.header("Content-Type", "text/plain");
     res.send(llmsText);
   } catch (error) {
     console.error("llms.txt generation error:", error);
@@ -54,12 +60,12 @@ export const generateLlmsTxt = async (req, res) => {
   }
 };
 
-// robots.txt to point crawlers to the sitemap
 export const generateRobotsTxt = (req, res) => {
-  const baseUrl = `${req.protocol}://${req.get('host')}`;
-  
-  const robotsTxt = `User-agent: *\nAllow: /\n\nSitemap: ${baseUrl}/sitemap.xml\n`;
-  
-  res.header('Content-Type', 'text/plain');
+  const protocol = req.headers["x-forwarded-proto"] || req.protocol;
+  const baseUrl = `${protocol}://${req.get("host")}`;
+
+  const robotsTxt = `User-agent: *\nAllow: /\nDisallow: /admin\n\nSitemap: ${baseUrl}/sitemap.xml\n`;
+
+  res.header("Content-Type", "text/plain");
   res.send(robotsTxt);
 };
