@@ -1,5 +1,5 @@
 import BlogPost from "../models/BlogPost.model.js";
-import { generateSEOContent } from "../services/aiService.js";
+import { generateSEOContentPipeline } from "../services/aiService.js";
 
 export const BlogGenerator = async (req, res) => {
   const { adjective, category, geography } = req.body;
@@ -8,32 +8,41 @@ export const BlogGenerator = async (req, res) => {
     return res.status(400).json({ error: "Missing required variables" });
   }
 
-  const slug = `${adjective}-website-builder-for-${category}-in-${geography}`
-    .toLowerCase()
-    .replace(/[^a-z0-9]+/g, "-")
-    .replace(/(^-|-$)+/g, "");
+  // slug to check if the post already exists
+  const checkSlug =
+    `${adjective}-website-builder-for-${category}-in-${geography}`
+      .toLowerCase()
+      .replace(/[^a-z0-9]+/g, "-")
+      .replace(/(^-|-$)+/g, "");
 
   try {
-    const existingPost = await BlogPost.findOne({ slug });
+    const existingPost = await BlogPost.findOne({ slug: checkSlug });
     if (existingPost) {
       return res
         .status(409)
-        .json({ error: "Post for this combination already exists.", slug });
+        .json({
+          error: "Post for this combination already exists.",
+          slug: checkSlug,
+        });
     }
+    console.log(`Starting multi-model SEO pipeline for: ${checkSlug}...`);
 
-    console.log(`Generating content via Gemini for: ${slug}...`);
-    const aiData = await generateSEOContent(adjective, category, geography);
+    const aiData = await generateSEOContentPipeline(
+      adjective,
+      category,
+      geography,
+    );
 
     const newPost = new BlogPost({
       adjective,
       category,
       geography,
-      slug,
+      slug: aiData.slug || checkSlug,
       metaTitle: aiData.metaTitle,
       metaDescription: aiData.metaDescription,
       h1: aiData.h1,
       htmlContent: aiData.htmlContent,
-      status: "published"
+      status: "published",
     });
 
     await newPost.save();
@@ -41,6 +50,7 @@ export const BlogGenerator = async (req, res) => {
       .status(201)
       .json({ message: "Blog generated successfully", post: newPost });
   } catch (error) {
+    console.error("Generator Error:", error);
     res.status(500).json({ error: error.message });
   }
 };
@@ -72,7 +82,7 @@ export const getAllBlogPosts = async (req, res) => {
       .select("slug h1 metaDescription category geography createdAt")
       .skip(skip)
       .limit(limit);
-    
+
     const totalPosts = await BlogPost.countDocuments({ status: "published" });
 
     res.json({
