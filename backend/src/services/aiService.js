@@ -7,11 +7,6 @@ dotenv.config();
 
 const genAI = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
 
-const openrouter = new OpenAI({
-  baseURL: "https://openrouter.ai/api/v1",
-  apiKey: process.env.OPENROUTER_API_KEY,
-});
-
 const githubAI = new OpenAI({
   baseURL: "https://models.inference.ai.azure.com",
   apiKey: process.env.GITHUB_TOKEN,
@@ -30,13 +25,13 @@ export async function generateSEOContentPipeline(adjective, category, geography)
     console.log("1. Generating 13-Section Megaprompt Outline...");
     const outline = await generateOutline(keyword, category, geography);
 
-    console.log("2. Generating 3500+ Word HTML Article with DeepSeek V3...");
+    console.log("2. Generating 3500+ Word HTML Article...");
     const articleHtml = await generateArticle(keyword, outline, category, geography);
 
     console.log("3. Generating SEO Metadata with GPT-4o...");
     const seoData = await generateSEOTags(keyword, outline);
 
-    console.log("4. Generating 5 Images with FLUX...");
+    console.log("4. Generating a mix of AI and Real Stock Images...");
     const images = await generateImages(category, geography);
 
     console.log("5. Assembling Final HTML & Alt Tags...");
@@ -80,7 +75,7 @@ async function generateOutline(keyword, category, geography) {
   Return ONLY the text outline.`;
 
   const response = await genAI.models.generateContent({
-    model: "gemini-2.5-flash",
+    model: "gemini-2.5-flash-lite", // we will use model gemini-2.5-flash in production
     contents: prompt,
   });
   return response.text;
@@ -100,8 +95,8 @@ async function generateArticle(keyword, outline, category, geography) {
      - **CRITICAL: In Section 10 (Competitors), you MUST create a beautifully formatted HTML comparison table using Tailwind classes (e.g., <table class="w-full text-left border-collapse border border-slate-200 my-6">, <th class="bg-slate-100 p-4">, <td class="p-4 border-b">).**
      - **CRITICAL: Use visually distinct pull-quotes for key statistics using: <blockquote class="border-l-4 border-blue-500 pl-4 italic text-slate-700 my-8 text-lg">Your quote here</blockquote>**
      - **CRITICAL: Wrap formulas or case studies in: <div class="bg-slate-50 p-6 rounded-xl border border-slate-200 my-6 shadow-sm"><p class="text-slate-700 font-medium">Text</p></div>**
-  6. **EXTREME ANTI-LAZINESS RULE:** You must write at least 3 FULL paragraphs (300+ words) for EVERY single section. Sections 11, 12, 13, and 14 MUST be just as long and detailed as Section 1. Do not summarize or rush the end of the article.
-    - **EXCEPTION FOR SECTION 15 (FAQs):** Do NOT write generic paragraphs about FAQs. You MUST write exactly 12 individual Questions and detailed Answers. Format each Question in an <h3> tag and each Answer in a <p> tag. **CRITICAL: Each of the 12 Answers MUST be a robust, comprehensive paragraph of at least 60 to 100 words (4+ sentences). Do NOT give one-sentence answers.**
+  6. **EXTREME ANTI-LAZINESS RULE:** You must write at least 3 full paragraphs for each section.Each paragraph should be approximately 80-120 words. Sections 11, 12, 13, and 14 MUST be just as long and detailed as Section 1. Do not summarize or rush the end of the article.
+    - **EXCEPTION FOR SECTION 15 (FAQs):** Do NOT write generic paragraphs about FAQs. You MUST write exactly 12 individual Questions and detailed Answers. Format each Question in an <h3> tag and each Answer in a <p> tag. **CRITICAL: Each answer must be 80-100 words. Answers must include practical, real-world examples relevant to the business category and city.Do NOT give one-sentence answers.use of <strong>important phrases</strong> and <i>emphasis text</i>**
   7. **TOKEN INJECTION (MANDATORY):** You MUST insert the following exact text tokens on their own line within the article. Do not modify these tokens in any way. If you miss a token, the system will crash.
      - Insert ***IMAGE_1*** after the first paragraph of Section 1.
      - Insert ***IMAGE_2*** after the first paragraph of Section 3.
@@ -109,16 +104,40 @@ async function generateArticle(keyword, outline, category, geography) {
      - Insert ***IMAGE_4*** after the first paragraph of Section 9.
      - Insert ***IMAGE_5*** after the first paragraph of Section 12.
      - Insert ***CTA_LINK*** at the very end of Section 7.
-     - Insert ***CTA_LINK*** at the very end of Section 15.`;
+     - Insert ***CTA_LINK*** at the very end of Section 15.  
+  8. **BLOG READABILITY OPTIMIZATION (MANDATORY)**:The article must feel like a professional editorial blog, not an academic essay.
+    Follow these rules:
+    • Paragraphs should be 80-120 words.
+    • Avoid large blocks of uninterrupted text.
+    • Use <ul><li> lists to summarize key ideas when explaining multiple points.
+    • Lists should contain 3-6 items.
+    • Every section must include at least one readability element:
+      - bullet list
+      - pull quote
+      - highlighted insight box
+      - short subheading (<h3>)
+      - use of <strong>important phrases</strong> or <i>emphasis text</i>
+      - strictly no use of markdown formatting like bold or italics symbols. Use HTML tags only.
+    • Never write more than 5 consecutive lines without a paragraph break or formatting element.
+  9. **CONTENT FLOW**:Each section should begin with a short transition sentence connecting it with the previous topic.
+  10. **WRITING STYLE**: Write in a modern editorial blog style similar to high-quality SaaS blogs.
+    • Use clear explanations
+    • Use practical examples
+    • Use reader-friendly transitions
+    • Avoid repeating the same sentence patterns
+    • Use varied phrasing and examples
+    • Do not use a robotic or overly formal tone. Be consultative and approachable.
+    • Strictly avoid using markdown formatting. Use HTML tags for all formatting needs.
+    • Strinctly Do NOT write an overall title or headline for the blog. Our system already handles the H1. Start the HTML immediately with the heading for Section 1. Every single one of the 15 main outline sections MUST be wrapped in an <h2> tag. Any subheadings you create inside those sections MUST be wrapped in an <h3> tag.
+`;
 
-  const response = await openrouter.chat.completions.create({
-    model: "deepseek/deepseek-chat",
-    messages: [{ role: "user", content: prompt }],
-    max_tokens: 8000,
+  const response = await genAI.models.generateContent({
+    model: "gemini-2.5-flash-lite",  // we will use model gemini-2.5-flash in production
+    contents: prompt,
   });
+  let content =response.text;
 
   // Fallback cleaner to strip any accidental markdown blocks
-  let content = response.choices[0].message.content;
   content = content
     .replace(/```html/g, "")
     .replace(/```/g, "")
@@ -147,21 +166,45 @@ async function generateSEOTags(keyword, outline) {
 }
 
 async function generateImages(category, geography) {
-  console.log("4. Generating a mix of AI and Real Stock Images...");
+
+  function getBusinessPrompt(category, geography) {
+    const retail = ["salon", "boutique", "spa", "restaurant", "cafe", "store"];
+    const healthcare = ["clinic", "hospital", "dental clinic"];
+    const fitness = ["gym", "fitness center", "yoga studio"];
+    const services = ["plumber", "electrician", "carpenter", "cleaner"];
+
+    if (retail.includes(category)) {
+      return `modern ${category} storefront in ${geography} India, urban street, photorealistic`;
+    }
+
+    if (healthcare.includes(category)) {
+      return `modern ${category} building in ${geography} India, medical facility exterior, realistic photography`;
+    }
+
+    if (fitness.includes(category)) {
+      return `modern ${category} interior in ${geography} India, workout equipment, professional studio`;
+    }
+
+    if (services.includes(category)) {
+      return `professional ${category} working at client location in ${geography} India, realistic photography`;
+    }
+
+    return `modern ${category} business in ${geography} India, realistic photography`;
+  }
 
   // The 5 specific image intents
   const imageConfigs = [
-    { type: "unsplash", query: `${category} building ${geography}` }, // Real city photo
+    { type: "flux", prompt: getBusinessPrompt(category, geography) }, // Real city photo
     {
       type: "flux",
-      prompt: `A clean website builder dashboard interface showing analytics for a ${category}, highly realistic UI`,
+      prompt: `modern SaaS website builder dashboard showing analytics for ${category} business, clean UI interface, charts and graphs`,
     }, // AI UI Dashboard
-    { type: "unsplash", query: `professional working ${category}` }, // Real person working
+    { type: "unsplash", prompt: `${category} service professional` }, // Real person working
     {
       type: "flux",
-      prompt: `A minimalist UI graphic showing local SEO growth and web design tools for ${category}`,
+      prompt: `SEO analytics dashboard showing growth for ${category} business, charts increasing, digital marketing concept`,
     }, // AI Abstract Graphic
-    { type: "unsplash", query: `business analytics dashboard success` }, // Real computer/growth photo
+    { type: "unsplash", prompt: `business analytics dashboard` }, // Real computer/growth photo
   ];
 
   const generateFluxImage = async (promptText) => {
@@ -187,7 +230,7 @@ async function generateImages(category, geography) {
       if (config.type === "unsplash") {
         console.log(`Fetching Real Image ${index + 1}/5 (Unsplash)...`);
         try {
-          const unsplashUrl = `https://api.unsplash.com/search/photos?query=${encodeURIComponent(config.query)}&orientation=landscape&per_page=10&content_filter=high&client_id=${process.env.UNSPLASH_ACCESS_KEY}`;
+          const unsplashUrl = `https://api.unsplash.com/search/photos?query=${encodeURIComponent(config.prompt)}&orientation=landscape&per_page=10&content_filter=high&client_id=${process.env.UNSPLASH_ACCESS_KEY}`;
           const response = await fetch(unsplashUrl);
 
           if (!response.ok) {
@@ -212,7 +255,7 @@ async function generateImages(category, geography) {
             `Unsplash failed for Image ${index + 1} (${unsplashError.message}). Falling back to FLUX...`,
           );
 
-          const fallbackPrompt = `Highly realistic, cinematic photography of ${config.query}, 8k resolution, photorealistic`;
+          const fallbackPrompt = `Highly realistic, cinematic photography of ${config.prompt}, 8k resolution, photorealistic`;
           return await generateFluxImage(fallbackPrompt);
         }
       }

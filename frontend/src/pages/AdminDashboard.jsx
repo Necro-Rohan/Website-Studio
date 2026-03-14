@@ -22,7 +22,7 @@ export default function AdminDashboard() {
     setMessage(null);
 
     try {
-      const response = await api.post("/generate", formData,
+      await api.post("/generate", formData,
         { headers: {
           "x-admin-secret": secretKey,
           },
@@ -30,9 +30,7 @@ export default function AdminDashboard() {
       );
       setMessage({
         type: "success",
-        text:
-          "Page generated successfully! Checkout /blog/" +
-          response.data.post.slug,
+        text: "Job added to queue! The AI is writing your blog in the background. It will be live in a few minutes.",
       });
       setFormData({ adjective: "", category: "", geography: "" });
     } catch (error) {

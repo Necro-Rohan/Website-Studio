@@ -33,7 +33,7 @@ export const BlogGenerator = async (req, res) => {
       adjective, 
       category, 
       geography 
-    });
+    }, checkSlug);
 
     // IMMEDIATELY sending a response back. No more waiting for the AI to do its thing!
     return res.status(202).json({ 

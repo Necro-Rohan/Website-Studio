@@ -3,8 +3,11 @@ import Redis from 'ioredis';
 import dotenv from 'dotenv';
 import BlogPost from '../models/BlogPost.model.js';
 import { generateSEOContentPipeline } from '../services/aiService.js'; 
+import connectDb from '../../db.js';
 
 dotenv.config();
+
+connectDb();
 
 const redisConnection = new Redis(process.env.REDIS_URL, {
   maxRetriesPerRequest: null,
@@ -45,7 +48,11 @@ const worker = new Worker('blog-generation-queue', async (job) => {
   }
 }, { 
   connection: redisConnection,
-  concurrency: 5 // Process up to 5 blogs simultaneously!
+  concurrency: 1, // Process up to 1 blog simultaneously!
+  limiter: {
+    max: 10,           // Maximum number of jobs processed
+    duration: 60000    // Per duration in milliseconds (60,000ms = 1 minute)
+  }
 });
 
 worker.on('failed', (job, err) => {
