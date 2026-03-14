@@ -40,12 +40,23 @@ export const renderSeoBlogPage = async (req, res) => {
       htmlData = htmlData
         .replace("<title>InstaWeb Labs</title>", "")
         .replace("</head>", `${seoTags}\n</head>`);
+      
+      htmlData = htmlData.replace(
+        '<div id="root"></div>',
+        `<div id="root">
+          <div style="opacity: 0; position: absolute; z-index: -1;">
+            <h1>${post.h1}</h1>
+            ${post.htmlContent}
+          </div>
+        </div>`,
+      );
+      return res.status(200).send(htmlData);
         
     } else {
       htmlData = htmlData.replace('<title>InstaWeb Labs</title>', `<title>Post Not Found - InstaWeb Labs</title>`);
+      return res.status(404).send(htmlData);
     }
 
-    res.send(htmlData);
   } catch (err) {
     console.error("SEO Injection Error:", err);
     res.status(500).send("Server Error occurred while injecting SEO.");
