@@ -17,5 +17,8 @@ const BlogPostSchema = new mongoose.Schema({
   status: { type: String, enum: ['published', 'draft', 'failed'], default: 'published' }
 }, { timestamps: true });
 
+// TO FIX THE SORTING CRASH 
+BlogPostSchema.index({ createdAt: -1 });
+
 const BlogPost = mongoose.model('BlogPost', BlogPostSchema);
 export default BlogPost;

@@ -78,10 +78,12 @@ export const getAllBlogPosts = async (req, res) => {
     const skip = (page - 1) * limit;
 
     const posts = await BlogPost.find({ status: "published" })
+      .select("-htmlContent")
       .sort({ createdAt: -1 })
       .select("slug h1 metaDescription category geography createdAt")
       .skip(skip)
-      .limit(limit);
+      .limit(limit)
+      .lean();
 
     const totalPosts = await BlogPost.countDocuments({ status: "published" });
 
