@@ -114,7 +114,7 @@ export default function BlogPage() {
           prose-img:rounded-2xl prose-img:shadow-xl prose-img:border prose-img:border-slate-200 prose-img:w-full prose-img:object-cover
           prose-blockquote:border-l-4 prose-blockquote:border-blue-600 prose-blockquote:bg-blue-50 prose-blockquote:py-4 prose-blockquote:px-6 prose-blockquote:rounded-r-2xl prose-blockquote:text-slate-800 prose-blockquote:not-italic prose-blockquote:shadow-sm prose-blockquote:font-medium
           prose-li:marker:text-blue-600
-          prose-table:w-full prose-table:text-sm sm:prose-table:text-base prose-table:text-slate-700 prose-table:border-collapse prose-th:bg-slate-50 prose-th:p-3 sm:prose-th:p-4 prose-th:font-bold prose-td:p-3 sm:prose-td:p-4 prose-td:border-b prose-td:border-slate-200 prose-td:align-top"
+          prose-table:w-full prose-table:h-full prose-table:text-sm sm:prose-table:text-base prose-table:text-slate-700 prose-table:border-collapse prose-th:bg-slate-50 prose-th:p-3 sm:prose-th:p-4 prose-th:font-bold prose-td:p-3 sm:prose-td:p-4 prose-td:border-b prose-td:border-slate-200 prose-td:align-top"
           >
             <div dangerouslySetInnerHTML={{ __html: post.htmlContent }} />
           </article>

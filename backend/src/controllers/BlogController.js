@@ -1,6 +1,5 @@
 import BlogPost from "../models/BlogPost.model.js";
-import { addBlogJob } from "../jobs/queue.js"; 
-
+import { addBlogJob } from "../jobs/queue.js";
 
 export const BlogGenerator = async (req, res) => {
   const { adjective, category, geography } = req.body;
@@ -9,15 +8,21 @@ export const BlogGenerator = async (req, res) => {
     return res.status(400).json({ error: "Missing required variables" });
   }
 
-  const formattedAdjective = adjective.charAt(0).toUpperCase() + adjective.slice(1).toLowerCase();
-  const formattedCategory = category.charAt(0).toUpperCase() + category.slice(1).toLowerCase();
-  const formattedGeography = geography.charAt(0).toUpperCase() + geography.slice(1).toLowerCase();
+  const formattedAdjective =
+    adjective.charAt(0).toUpperCase() + adjective.slice(1).toLowerCase();
+  const formattedCategory =
+    category.charAt(0).toUpperCase() + category.slice(1).toLowerCase();
+  const formattedGeography =
+    geography.charAt(0).toUpperCase() + geography.slice(1).toLowerCase();
   const keyword = `${formattedAdjective} Website Builder for ${formattedCategory} in ${formattedGeography}`;
-  
-  const checkSlug = keyword.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)+/g, "");
+
+  const checkSlug = keyword
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/(^-|-$)+/g, "");
 
   try {
-    // Check if it already exists 
+    // Check if it already exists
     const existingPost = await BlogPost.findOne({ slug: checkSlug });
     if (existingPost) {
       return res.status(409).json({
@@ -26,22 +31,26 @@ export const BlogGenerator = async (req, res) => {
       });
     }
 
-    console.log(`Adding multi-model SEO pipeline job to queue for: ${checkSlug}...`);
+    console.log(
+      `Adding multi-model SEO pipeline job to queue for: ${checkSlug}...`,
+    );
 
     // Tossing the data into the Redis Queue!
-    const job = await addBlogJob({ 
-      keyword, // Passing the full keyword to make the worker's life easier
-      adjective, 
-      category, 
-      geography 
-    }, checkSlug);
+    const job = await addBlogJob(
+      {
+        keyword, // Passing the full keyword to make the worker's life easier
+        adjective,
+        category,
+        geography,
+      },
+      checkSlug,
+    );
 
     // IMMEDIATELY sending a response back. No more waiting for the AI to do its thing!
-    return res.status(202).json({ 
-      message: "Blog generation started in the background!", 
-      jobId: job.id 
+    return res.status(202).json({
+      message: "Blog generation started in the background!",
+      jobId: job.id,
     });
-
   } catch (error) {
     console.error("Generator Queue Error:", error);
     res.status(500).json({ error: "Failed to add job to queue" });
@@ -91,40 +100,66 @@ export const getAllBlogPosts = async (req, res) => {
   }
 };
 
-// export const generateAiImageUrl = async (req, res) => {
-//   const pollinationKey = process.env.POLLINATION_API_KEY;
-//   if (!pollinationKey) {
-//     return res.status(500).json({ error: "Pollination API key not configured" });
-//   }
-//   const { prompt, seed } = req.query;
-//   if (!prompt) return res.status(400).send("Prompt is required");
-//   const pollinationsUrl = `https://gen.pollinations.ai/image/${encodeURIComponent(prompt)}?width=800&height=450&nologo=true&model=flux&seed=${seed}&key=${pollinationKey}`;
+export const updateBlogPost = async (req, res) => {
+  try {
+    const { slug } = req.params;
+    const updates = req.body; // This might only contain { h1: "New Title" }
 
-//   try {
-//     const imageResponse = await fetch(pollinationsUrl, {
-//       headers: {
-//         "User-Agent": "InstaWeb-Labs-Proxy/1.0",
-//         Accept: "image/*",
-//       },
-//     });
-    
-//     if (!imageResponse.ok) {
-//       const errorDetails = await imageResponse.text(); // Get the exact reason from Pollinations
-//       throw new Error(
-//         `Pollinations rejected request. Status: ${imageResponse.status}. Details: ${errorDetails}`,
-//       );
-//     }
-//     // Convert the image to a buffer
-//     const arrayBuffer = await imageResponse.arrayBuffer();
-//     const buffer = Buffer.from(arrayBuffer);
+    // Security best practice: Only allow specific fields to be edited
+    const allowedUpdates = [
+      "h1",
+      "metaTitle",
+      "metaDescription",
+      "htmlContent",
+    ];
+    const filteredUpdates = {};
 
-//     // Tell the browser "Hey, this is an image, not text!"
-//     res.setHeader('Content-Type', 'image/jpeg');
-    
-//     // Sending the image buffer directly to the frontend
-//     res.send(buffer);
-//   } catch (error) {
-//     console.error("Image Proxy Error:", error);
-//     res.status(500).send("Failed to load image");
-//   }
-// };
+    Object.keys(updates).forEach((key) => {
+      if (allowedUpdates.includes(key)) {
+        filteredUpdates[key] = updates[key];
+      }
+    });
+
+    // Check if there's actually anything to update
+    if (Object.keys(filteredUpdates).length === 0) {
+      return res
+        .status(400)
+        .json({ error: "No valid fields provided for update" });
+    }
+
+    // $set will cleanly update ONLY the fields present in filteredUpdates
+    const updatedPost = await BlogPost.findOneAndUpdate(
+      { slug },
+      { $set: filteredUpdates },
+      { new: true },
+    );
+
+    if (!updatedPost) {
+      return res.status(404).json({ error: "Blog post not found" });
+    }
+
+    return res.status(200).json({
+      message: "Blog patched successfully!",
+      post: updatedPost,
+    });
+  } catch (error) {
+    console.error("Error patching blog post:", error);
+    res.status(500).json({ error: "Failed to update the blog post" });
+  }
+};
+
+export const deleteBlogPost = async (req, res) => {
+  try {
+    const { slug } = req.params;
+    const deletedPost = await BlogPost.findOneAndDelete({ slug });
+
+    if (!deletedPost) {
+      return res.status(404).json({ error: "Blog post not found" });
+    }
+
+    return res.status(200).json({ message: "Blog deleted successfully!" });
+  } catch (error) {
+    console.error("Error deleting blog post:", error);
+    res.status(500).json({ error: "Failed to delete the blog post" });
+  }
+};

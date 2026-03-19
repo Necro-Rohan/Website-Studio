@@ -4,7 +4,7 @@ import path from 'path';
 import dotenv from 'dotenv';
 import { fileURLToPath } from 'url';
 import { dirname } from 'path';
-import "./src/jobs/worker.js"; // remeber to comment this out if you run it on local host with command npm run dev as we have configured this command to start both server and worker together using concurrently. 
+// import "./src/jobs/worker.js"; // remeber to comment this out if you run it on local host with command npm run dev as we have configured this command to start both server and worker together using concurrently. 
 
 dotenv.config();
 
