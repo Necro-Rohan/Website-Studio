@@ -9,17 +9,17 @@ const BlogPostSchema = new mongoose.Schema(
 
     // The SEO Outputs
     slug: { type: String, required: true, unique: true },
-    metaTitle: { type: String, required: true },
-    metaDescription: { type: String, required: true },
+    metaTitle: { type: String },
+    metaDescription: { type: String },
     h1: { type: String, required: true },
-    htmlContent: { type: String, required: true },
+    htmlContent: { type: String },
 
-    coverImage: { type: String, required: false },
-    
+    coverImage: { type: String },
+
     // Admin tracking
     status: {
       type: String,
-      enum: ["published", "draft", "failed"],
+      enum: ["published", "generating", "failed"],
       default: "published",
     },
   },

@@ -1,13 +1,71 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Merriweather:wght@400;700;900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Merriweather:wght@400;700;900&family=Newsreader:opsz,wght@6..72,400;6..72,600;6..72,700&display=swap');
 @import "tailwindcss";
 @plugin "@tailwindcss/typography";
 
+
+@theme {
+  /* MD3 Color Palette */
+  --color-on-primary-container: #ffffff;
+  --color-surface-container-low: #f8fafc;
+  --color-on-secondary-container: #0f172a;
+  --color-surface-bright: #ffffff;
+  --color-on-error-container: #7f1d1d;
+  --color-on-background: #0f172a;
+  --color-surface-dim: #f1f5f9;
+  --color-surface-container: #f1f5f9;
+  --color-primary-container: #135bec;
+  --color-inverse-surface: #1e293b;
+  --color-tertiary-container: #d1fae5;
+  --color-tertiary-fixed: #d1fae5;
+  --color-on-surface-variant: #475569;
+  --color-secondary-fixed: #f1f5f9;
+  --color-tertiary: #10b981;
+  --color-outline: #e2e8f0;
+  --color-surface-tint: #135bec;
+  --color-surface-variant: #f1f5f9;
+  --color-on-tertiary-container: #064e3b;
+  --color-on-tertiary: #ffffff;
+  --color-tertiary-fixed-dim: #a7f3d0;
+  --color-secondary: #475569;
+  --color-on-primary-fixed: #1e3a8a;
+  --color-on-secondary: #ffffff;
+  --color-primary-fixed-dim: #bfdbfe;
+  --color-on-primary: #ffffff;
+  --color-on-error: #ffffff;
+  --color-secondary-fixed-dim: #e2e8f0;
+  --color-on-tertiary-fixed-variant: #059669;
+  --color-surface-container-highest: #cbd5e1;
+  --color-error: #ef4444;
+  --color-secondary-container: #f1f5f9;
+  --color-surface-container-lowest: #ffffff;
+  --color-primary-fixed: #dbeafe;
+  --color-outline-variant: #cbd5e1;
+  --color-surface: #ffffff;
+  --color-on-secondary-fixed-variant: #475569;
+  --color-surface-container-high: #e2e8f0;
+  --color-on-secondary-fixed: #0f172a;
+  --color-inverse-on-surface: #f8fafc;
+  --color-on-surface: #0f172a;
+  --color-primary: #135bec;
+  --color-inverse-primary: #b4c5ff;
+  --color-background: #ffffff;
+  --color-on-primary-fixed-variant: #135bec;
+  --color-on-tertiary-fixed: #064e3b;
+  --color-error-container: #fee2e2;
+
+  /* Custom Fonts */
+  --font-headline: 'Newsreader', serif;
+  --font-body: 'Inter', sans-serif;
+  --font-label: 'Inter', sans-serif;
+}
 
 @layer base {
 
   html,
   body {
-    font-family: 'Inter', sans-serif;
+    font-family: var(--font-body);
+    background-color: var(--color-background);
+    color: var(--color-on-background);
   }
 
   /* This forces the prose headings to use the serif font */

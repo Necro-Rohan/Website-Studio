@@ -57,6 +57,9 @@ const worker = new Worker(
       return { success: true, slug: newBlog.slug };
     } catch (error) {
       console.error(`Job ${job.id} failed:`, error.message);
+
+      await BlogPost.findOneAndUpdate({ slug }, { status: "failed" });
+      
       throw error; // This triggers the BullMQ retry logic
     }
   },

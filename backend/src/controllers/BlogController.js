@@ -31,6 +31,15 @@ export const BlogGenerator = async (req, res) => {
       });
     }
 
+    await BlogPost.create({
+      slug: checkSlug,
+      h1: `Generating SEO Page...`,
+      category: formattedCategory,
+      geography: formattedGeography,
+      adjective: formattedAdjective,
+      status: "generating",
+    });
+
     console.log(
       `Adding multi-model SEO pipeline job to queue for: ${checkSlug}...`,
     );
@@ -39,9 +48,9 @@ export const BlogGenerator = async (req, res) => {
     const job = await addBlogJob(
       {
         keyword, // Passing the full keyword to make the worker's life easier
-        adjective,
-        category,
-        geography,
+        adjective: formattedAdjective,
+        category: formattedCategory,
+        geography: formattedGeography,
       },
       checkSlug,
     );
@@ -76,22 +85,29 @@ export const getAllBlogPosts = async (req, res) => {
   try {
     const page = parseInt(req.query.page) || 1;
     const limit = parseInt(req.query.limit) || 9;
+    const { status } = req.query;
+
+    const query = {};
+    if (status) {
+      query.status = status;
+    }
 
     const skip = (page - 1) * limit;
 
-    const posts = await BlogPost.find({ status: "published" })
+    const posts = await BlogPost.find(query)
       .sort({ createdAt: -1 })
-      .select("slug h1 metaDescription category geography createdAt coverImage")
+      .select("slug h1 metaDescription category geography createdAt coverImage status")
       .skip(skip)
       .limit(limit)
       .lean();
 
-    const totalPosts = await BlogPost.countDocuments({ status: "published" });
+    const totalPosts = await BlogPost.countDocuments(query);
+    const totalPages = Math.ceil(totalPosts / limit);
 
     res.json({
       posts,
       currentPage: page,
-      totalPages: Math.ceil(totalPosts / limit),
+      totalPages,
       totalPosts,
     });
   } catch (error) {
@@ -105,7 +121,7 @@ export const updateBlogPost = async (req, res) => {
     const { slug } = req.params;
     const updates = req.body; // This might only contain { h1: "New Title" }
 
-    // Security best practice: Only allow specific fields to be edited
+    // Only allowing specific fields to be edited
     const allowedUpdates = [
       "h1",
       "metaTitle",

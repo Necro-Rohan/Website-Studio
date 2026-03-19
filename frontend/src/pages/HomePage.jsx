@@ -36,7 +36,7 @@ export default function HomePage() {
   useEffect(() => {
     const fetchBlogs = async () => {
       setLoading(true);
-      api.get(`/blogs?page=${currentPage}&limit=${itemsPerPage}`)
+      api.get(`/blogs?page=${currentPage}&limit=${itemsPerPage}&status=published`)
         .then((res) => {
           setPosts(res.data.posts);
           setTotalPages(res.data.totalPages);
