@@ -301,7 +301,7 @@ async function generateImages(category, geography) {
 
     try {
       const response = await fetch(pollinationsUrl, {
-        headers: { "User-Agent": "InstaWeb-Labs-Proxy/1.0", Accept: "image/*" },
+        headers: { "User-Agent": "Website-Studio-Proxy/1.0", Accept: "image/*" },
       });
 
       if (!response.ok) {
@@ -433,7 +433,7 @@ function assembleFinalHtml(html, images, category, geography) {
       ? `<figcaption class="text-center text-sm font-medium text-slate-500 mt-4">
           ${seoAltTags[index]} 
           <span class="block text-xs mt-1.5 opacity-80">
-            Photo by <a href="${imgData.photographerUrl}?utm_source=InstaWeb_Labs&utm_medium=referral" target="_blank" rel="noopener noreferrer" style="color: #2563eb; font-weight: medium; text-decoration: underline;">${imgData.photographerName}</a> on <a href="https://unsplash.com/?utm_source=InstaWeb_Labs&utm_medium=referral" target="_blank" rel="noopener noreferrer" style="color: #2563eb; font-weight: medium; text-decoration: underline;">Unsplash</a>
+            Photo by <a href="${imgData.photographerUrl}?utm_source=Website_Studio&utm_medium=referral" target="_blank" rel="noopener noreferrer" style="color: #2563eb; font-weight: medium; text-decoration: underline;">${imgData.photographerName}</a> on <a href="https://unsplash.com/?utm_source=Website_Studio&utm_medium=referral" target="_blank" rel="noopener noreferrer" style="color: #2563eb; font-weight: medium; text-decoration: underline;">Unsplash</a>
           </span>
         </figcaption>`
       : `<figcaption class="text-center text-sm font-medium text-slate-500 mt-4">${seoAltTags[index]}</figcaption>`;

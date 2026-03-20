@@ -56,7 +56,7 @@ export default function BlogPage() {
                 />
               </div>
               <span className="text-xl font-black tracking-tight text-slate-900 group-hover:text-blue-600 transition">
-                InstaWeb Labs
+                Website Studio 
               </span>
             </Link>
           </div>
@@ -147,7 +147,10 @@ export default function BlogPage() {
       </main>
 
       <footer className="border-t border-slate-200 bg-slate-50 py-12 mt-12 text-center text-sm text-slate-500">
-        <p>© {new Date().getFullYear()} Instaweb Labs. All rights reserved.</p>
+        <p>
+          © {new Date().getFullYear()} Website Studio | Smart Website Builder
+          for Local Businesses. All rights reserved.
+        </p>
         {/* <p>© 2026 Instaweb Labs. Built for Websites.co.in.</p> */}
       </footer>
     </div>

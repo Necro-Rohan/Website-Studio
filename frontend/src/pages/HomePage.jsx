@@ -97,7 +97,7 @@ export default function HomePage() {
                 />
               </div>
               <span className="text-xl font-black tracking-tight">
-                InstaWeb Labs
+                Website Studio
               </span>
             </Link>
           </div>
@@ -217,8 +217,8 @@ export default function HomePage() {
                   <div className="flex items-center justify-around">
                     {getPaginationGroup().map((number, index) =>
                       number === "..." ? (
-                        <span 
-                          key={`ellipsis-${index}`} 
+                        <span
+                          key={`ellipsis-${index}`}
                           className="flex size-8 items-end justify-center text-slate-400 text-lg font-bold tracking-widest pb-2"
                         >
                           ...
@@ -235,7 +235,7 @@ export default function HomePage() {
                         >
                           {number}
                         </button>
-                      )
+                      ),
                     )}
                   </div>
 
@@ -301,7 +301,7 @@ export default function HomePage() {
                   />
                 </div>
                 <span className="text-lg font-extrabold tracking-tight text-slate-900">
-                  websites.co.in
+                  Website Studio 
                 </span>
               </div>
               <p className="text-slate-500 max-w-sm text-[15px] leading-relaxed">
@@ -364,8 +364,8 @@ export default function HomePage() {
           </div>
           <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 pt-5 border-t border-slate-200">
             <p className="text-xs font-medium text-slate-400">
-              © {new Date().getFullYear()} InstaWeb Labs. Built for
-              websites.co.in.
+              © {new Date().getFullYear()} Website Studio | Smart Website
+              Builder for Local Businesses
             </p>
             <div className="flex gap-6">
               <a

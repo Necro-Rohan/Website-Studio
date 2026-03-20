@@ -44,7 +44,7 @@ export const generateLlmsTxt = async (req, res) => {
    const protocol = req.headers["x-forwarded-proto"] || req.protocol;
    const baseUrl = `${protocol}://${req.get("host")}`;
 
-    let llmsText = `# Websites.co.in AI Blog Directory\n\n`;
+    let llmsText = `# Website Studio Blog Directory\n\n`;
     llmsText += `This document provides a directory of our SEO-optimized guides for local businesses.\n\n`;
     llmsText += `## Available Guides:\n\n`;
 

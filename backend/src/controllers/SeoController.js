@@ -30,7 +30,7 @@ export const renderSeoBlogPage = async (req, res) => {
             "description": "${post.metaDescription}",
             "author": {
               "@type": "Organization",
-              "name": "Websites.co.in"
+              "name": "Website Studio"
             }
           }
         </script>
@@ -38,7 +38,7 @@ export const renderSeoBlogPage = async (req, res) => {
 
       // Strip out the default Vite title and inject the new block before </head>
       htmlData = htmlData
-        .replace("<title>InstaWeb Labs</title>", "")
+        .replace("<title>Website Studio | Smart Website Builder for Local Businesses</title>","")
         .replace("</head>", `${seoTags}\n</head>`);
       
       htmlData = htmlData.replace(
@@ -53,7 +53,7 @@ export const renderSeoBlogPage = async (req, res) => {
       return res.status(200).send(htmlData);
         
     } else {
-      htmlData = htmlData.replace('<title>InstaWeb Labs</title>', `<title>Post Not Found - InstaWeb Labs</title>`);
+      htmlData = htmlData.replace('<title>Website Studio | Smart Website Builder for Local Businesses</title>', `<title>Post Not Found | Website Studio</title>`);
       return res.status(404).send(htmlData);
     }
 
