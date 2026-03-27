@@ -15,7 +15,37 @@ export const renderSeoBlogPage = async (req, res) => {
     let htmlData = fs.readFileSync(indexPath, 'utf8');
 
     if (post) {
-      // a comprehensive SEO block with Schema and Open Graph
+      const articleSchema = {
+        "@context": "https://schema.org",
+        "@type": "Article",
+        "headline": post.h1,
+        "description": post.metaDescription,
+        "author": {
+          "@type": "Organization",
+          "name": "Website Studio"
+        }
+      };
+
+      let faqSchemaHtml = "";
+      if (post.content && post.content.faqs && post.content.faqs.length > 0) {
+        const faqItems = post.content.faqs.map(faq => ({
+          "@type": "Question",
+          "name": faq.question,
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": faq.answer
+          }
+        }));
+
+        const faqSchema = {
+          "@context": "https://schema.org",
+          "@type": "FAQPage",
+          "mainEntity": faqItems
+        };
+        
+        faqSchemaHtml = `<script type="application/ld+json">\n${JSON.stringify(faqSchema)}\n</script>`;
+      }
+
       const seoTags = `
         <title>${post.metaTitle}</title>
         <meta name="description" content="${post.metaDescription}" />
@@ -23,20 +53,11 @@ export const renderSeoBlogPage = async (req, res) => {
         <meta property="og:description" content="${post.metaDescription}" />
         <meta property="og:type" content="article" />
         <script type="application/ld+json">
-          {
-            "@context": "https://schema.org",
-            "@type": "Article",
-            "headline": "${post.h1}",
-            "description": "${post.metaDescription}",
-            "author": {
-              "@type": "Organization",
-              "name": "Website Studio"
-            }
-          }
+          ${JSON.stringify(articleSchema)}
         </script>
+        ${faqSchemaHtml}
       `;
 
-      // Strip out the default Vite title and inject the new block before </head>
       htmlData = htmlData
         .replace("<title>Website Studio | Smart Website Builder for Local Businesses</title>","")
         .replace("</head>", `${seoTags}\n</head>`);
@@ -46,10 +67,17 @@ export const renderSeoBlogPage = async (req, res) => {
         `<div id="root">
           <div style="opacity: 0; position: absolute; z-index: -1;">
             <h1>${post.h1}</h1>
-            ${post.htmlContent}
+            <p>${post.metaDescription}</p>
+            ${post.content && post.content.faqs ? post.content.faqs.map(faq => `
+              <div>
+                <h2>${faq.question}</h2>
+                <p>${faq.answer}</p>
+              </div>
+            `).join('') : ''}
           </div>
         </div>`,
       );
+      
       return res.status(200).send(htmlData);
         
     } else {

@@ -64,7 +64,7 @@ export const generateRobotsTxt = (req, res) => {
   const protocol = req.headers["x-forwarded-proto"] || req.protocol;
   const baseUrl = `${protocol}://${req.get("host")}`;
 
-  const robotsTxt = `User-agent: *\nAllow: /\nDisallow: /admin\n\nSitemap: ${baseUrl}/sitemap.xml\n`;
+  const robotsTxt = `User-agent: *\nAllow: /\nDisallow: /admin\n\nSitemap: ${baseUrl}/sitemap.xml\n\n# AI Crawler Sitemap\nLink: ${baseUrl}/llms.txt`;
 
   res.header("Content-Type", "text/plain");
   res.send(robotsTxt);

@@ -16,7 +16,7 @@ const redisConnection = new Redis(process.env.RENDER_REDIS_URL, {
 console.log("Blog Worker is running and waiting for jobs...");
 
 const worker = new Worker(
-  "blog-generation-queue",
+  "blog-generation-queue-test",
   async (job) => {
     const { keyword, category, geography, adjective } = job.data;
     const slug = job.id;
@@ -30,30 +30,36 @@ const worker = new Worker(
         geography,
       );
 
-      const imgMatch = generatedData.htmlContent.match(
-        /<img[^>]+src="([^">]+)"/,
-      );
-      const coverImage = imgMatch
-        ? imgMatch[1]
-        : "https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=800&q=80";
+      let coverImage =
+        "https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=800&q=80"; // Default fallback
 
-      // Save to MongoDB using the AI-generated SEO Data
+      if (generatedData.images && generatedData.images.length > 0) {
+        coverImage =
+          typeof generatedData.images[0] === "object"
+            ? generatedData.images[0].url
+            : generatedData.images[0];
+      }
+
+      const sanitizedImages = generatedData.images.map((img) => {
+        return typeof img === "string" ? img : img.url;
+      });
+      // Save to DB
       await BlogPost.findOneAndUpdate(
-        { slug: slug }, // Find the placeholder we created in the controller
+        { slug: slug }, 
         {
           $set: {
             metaTitle: generatedData.metaTitle,
             metaDescription: generatedData.metaDescription,
             h1: generatedData.h1,
-            htmlContent: generatedData.htmlContent,
+            content: generatedData.content,
+            images: sanitizedImages,
             coverImage: coverImage,
             status: "published", // Turn the yellow badge green!
           },
         },
-        { new: true },
+        { returnDocument: "after" },
       );
 
-      // await newBlog.save();
       console.log(`Job ${job.id} successfully completed and updated in DB!`);
 
       return { success: true, slug: slug };
@@ -70,10 +76,10 @@ const worker = new Worker(
   },
   {
     connection: redisConnection,
-    concurrency: 1, // Process up to 1 blog simultaneously!
+    concurrency: 1, 
     limiter: {
-      max: 5, // Maximum number of jobs processed
-      duration: 3600000, // Per duration in milliseconds (60,000ms = 1 minute)
+      max: 10, 
+      duration: 60000, 
     },
   },
 );

@@ -16,21 +16,18 @@ if (renderRedisUrl.startsWith("rediss://")) {
 
 const redisConnection = new Redis(renderRedisUrl, redisOptions);
 
-// const redisConnection = new Redis(process.env.RENDER_REDIS_URL, {
-//   maxRetriesPerRequest: null
-// });
 
 // the Queue
-export const blogQueue = new Queue('blog-generation-queue', { 
+export const blogQueue = new Queue('blog-generation-queue-test', { 
   connection: redisConnection 
 });
 
 // add jobs to the queue
 export async function addBlogJob(blogData, uniqueBlogId) {
   const job = await blogQueue.add("generate-blog", blogData, {
-    jobId: uniqueBlogId, // Ensure uniqueness to prevent duplicates
-    removeOnComplete: true, // Keep Redis clean
-    removeOnFail: 100, // Keeps only the last 100 failed jobs for debugging
+    jobId: uniqueBlogId, // Ensuring uniqueness to prevent duplicates
+    removeOnComplete: true, 
+    removeOnFail: 100, // only the last 100 failed jobs for debugging
     attempts: 3,
     timeout: 180000,
     backoff: {
