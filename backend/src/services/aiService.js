@@ -171,14 +171,14 @@ function getTopHalfSchema(category, geography) {
           },
           list: {
             type: Type.ARRAY,
-            description: `Generate exactly 5 highly specific features for a ${category} website.`,
+            description: `Generate exactly 6 highly specific features for a ${category} website.`,
             items: {
               type: Type.OBJECT,
               properties: {
                 title: { type: Type.STRING },
                 description: {
                   type: Type.STRING,
-                  description: "A detailed 60-word explanation of the feature.",
+                  description: "A detailed 50 to 55 words explanation of the feature.",
                 },
                 iconKeyword: { type: Type.STRING },
               },
@@ -202,7 +202,7 @@ function getTopHalfSchema(category, geography) {
                 businessProfile: { type: Type.STRING },
                 theProblem: {
                   type: Type.STRING,
-                  description: "60-word description of their struggles.",
+                  description: "40-word description of their struggles.",
                 },
                 theSolution: {
                   type: Type.STRING,
@@ -210,7 +210,7 @@ function getTopHalfSchema(category, geography) {
                 },
                 theResult: {
                   type: Type.STRING,
-                  description: "60-word description of their revenue growth.",
+                  description: "20-word description of their revenue growth.",
                 },
               },
             },
@@ -346,7 +346,7 @@ function getBottomHalfSchema(category, geography) {
                 },
                 answer: {
                   type: Type.STRING,
-                  description: `A massive, highly informative 60-65 words answer. You MUST explain how Websites.co.in specifically solves this using its platform features (like the mobile app, dashboard, or auto-SEO) applied to a ${category} in ${geography}.`,
+                  description: `A massive, highly informative 60-75 words answer. You MUST explain how Websites.co.in specifically solves this using its platform features (like the mobile app, dashboard, or auto-SEO) applied to a ${category} in ${geography}.`,
                 },
               },
             },
@@ -410,8 +410,8 @@ async function callGemini(prompt, schema) {
   for (let i = 0; i < maxRetries; i++) {
     try {
       const response = await genAI.models.generateContent({
-        model: "gemini-2.5-flash",
-        // model: "gemini-3.1-flash-lite-preview",
+        // model: "gemini-2.5-flash",
+        model: "gemini-3.1-flash-lite-preview",
         contents: prompt,
         config: {
           responseMimeType: "application/json",
