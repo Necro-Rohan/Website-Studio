@@ -151,7 +151,7 @@ export const HeroSection = ({ content, post, image }) => (
               <div className="absolute -inset-4 bg-[#5c218b]/10 rounded-3xl blur-2xl group-hover:bg-[#5c218b]/20 transition-colors duration-500"></div>
               {/* ADDED OVERFLOW HIDDEN AND BADGE */}
               <div className="relative overflow-hidden rounded-3xl shadow-2xl">
-                <img src={getImgUrl(image)} alt="Hero" className="w-full aspect-5/5 object-cover" />
+                <img src={getImgUrl(image)} alt="Hero" className="w-full aspect-5/5 object-cover" loading="eager" fetchpriority="high"/>
                 <UnsplashBadge img={image} />
               </div>
             </div>
@@ -313,7 +313,7 @@ export const CaseStudiesSection = ({ content, images }) => (
               <div className="absolute inset-0 bg-gradient-to-t from-[#191c1e] via-[#191c1e]/80 to-transparent flex items-center p-6 md:p-10 lg:p-12 hover:scale-105 transition-transform duration-700">
                 <div className="w-full">
                   <div className="text-[#e0b6ff] text-xs font-bold mb-3 uppercase tracking-[0.2em]">Case Study</div>
-                  <h4 className="text-xl lg:text-2xl font-bold text-white mb-4 leading-tight" dangerouslySetInnerHTML={{ __html: study.businessProfile }}></h4>
+                  <h3 className="text-xl lg:text-2xl font-bold text-white mb-4 leading-tight" dangerouslySetInnerHTML={{ __html: study.businessProfile }}></h3>
                 
                   {/* MOBILE VIEW  */}
                   <div className="block md:hidden">
