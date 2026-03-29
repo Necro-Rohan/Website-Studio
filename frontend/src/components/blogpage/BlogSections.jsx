@@ -64,15 +64,49 @@ export const Footer = () => (
   </footer>
 );
 
+// export const FinalCta = ({ post }) => (
+//   <section className="py-18 md:py-24 px-6 max-w-7xl mx-auto mb-20">
+//     <div className="bg-gradient-to-br from-[#5c218b] via-[#753ca5] to-[#9900ab] rounded-3xl p-12 lg:p-24 text-center text-white relative overflow-hidden shadow-2xl">
+//       <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(255,255,255,0.15),transparent)] pointer-events-none"></div>
+//       <h2 className="text-4xl lg:text-6xl font-black mb-8 tracking-tighter max-w-4xl mx-auto leading-tight">Ready to Build Your Digital Atelier?</h2>
+//       <p className="text-xl text-[#e5c1ff] mb-12 max-w-2xl mx-auto font-medium">Join the elite network of {post.geography} {post.category.toLowerCase()}s defining the future in the digital age.</p>
+//       <div className="flex flex-col sm:flex-row gap-4 justify-center relative z-10">
+//         <a href="https://websites.co.in" target="_blank" rel="noopener noreferrer" className="bg-white text-[#5c218b] px-10 py-4 rounded-full font-black text-lg hover:bg-slate-50 transition-colors shadow-xl">
+//           Start Your Free Trial
+//         </a>
+//       </div>
+//     </div>
+//   </section>
+// );
+
 export const FinalCta = ({ post }) => (
-  <section className="py-24 md:py-30 px-6 max-w-7xl mx-auto mb-20">
-    <div className="bg-gradient-to-br from-[#5c218b] via-[#753ca5] to-[#9900ab] rounded-3xl p-12 lg:p-24 text-center text-white relative overflow-hidden shadow-2xl">
-      <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(255,255,255,0.15),transparent)] pointer-events-none"></div>
-      <h2 className="text-4xl lg:text-6xl font-black mb-8 tracking-tighter max-w-4xl mx-auto leading-tight">Ready to Build Your Digital Atelier?</h2>
-      <p className="text-xl text-[#e5c1ff] mb-12 max-w-2xl mx-auto font-medium">Join the elite network of {post.geography} {post.category.toLowerCase()}s defining the future in the digital age.</p>
-      <div className="flex flex-col sm:flex-row gap-4 justify-center relative z-10">
-        <a href="https://websites.co.in" target="_blank" rel="noopener noreferrer" className="bg-white text-[#5c218b] px-10 py-4 rounded-full font-black text-lg hover:bg-slate-50 transition-colors shadow-xl">
-          Start Your Free Trial
+  <section className="px-6 max-w-5xl mx-auto mb-24">
+    <div className="relative bg-[#191c1e] rounded-3xl p-8 md:p-10 flex flex-col md:flex-row items-center justify-between overflow-hidden shadow-2xl border border-stone-800">
+      {/* Subtle Purple Glow Effect for Sharpness */}
+      <div className="absolute -top-24 -right-24 w-64 h-64 bg-[#5c218b] rounded-full filter blur-[100px] opacity-40 pointer-events-none"></div>
+
+      {/* Text Content */}
+      <div className="relative z-10 max-w-xl text-center md:text-left mb-8 md:mb-0">
+        <h2 className="text-3xl md:text-4xl font-black text-white mb-3 tracking-tight leading-tight">
+          Ready to dominate{" "}
+          <span className="text-[#e0b6ff]">{post.geography}</span>? 
+        </h2>
+        <p className="text-stone-400 text-base md:text-lg font-medium">
+          Join top-tier <b><i>{post.category.toLowerCase()}'s</i></b> scaling their
+          business in the digital age.
+        </p>
+      </div>
+
+      {/* Action Button */}
+      <div className="relative z-10 shrink-0 w-full md:w-auto">
+        <a
+          href="https://websites.co.in"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="flex items-center justify-center w-full md:w-auto bg-white text-[#191c1e] px-8 py-4 rounded-full font-black text-lg hover:scale-105 hover:shadow-[0_0_30px_rgba(224,182,255,0.2)] transition-all duration-300 gap-2 group"
+        >
+          <Zap className="w-5 h-5 text-[#5c218b] group-hover:scale-110 transition-transform" />
+          Start Building Free
         </a>
       </div>
     </div>
@@ -89,7 +123,7 @@ export const HeroSection = ({ content, post, image }) => (
     </div>
     <div className="grid lg:grid-cols-2 gap-16 items-center">
       <div>
-        <h1 className="text-4xl lg:text-6xl xl:text-7xl font-black tracking-tighter text-[#191c1e] leading-[1.1] mb-8">
+        <h1 className="text-4xl lg:text-5xl xl:text-6xl font-black tracking-tighter text-[#191c1e] leading-[1.1] mb-8">
           {content.h1}
         </h1>
         <p
@@ -112,11 +146,6 @@ export const HeroSection = ({ content, post, image }) => (
       {image && (
         <div className="relative group lg:block">
           <div className="absolute -inset-4 bg-[#5c218b]/10 rounded-3xl blur-2xl group-hover:bg-[#5c218b]/20 transition-colors duration-500"></div>
-          {/* <img
-            src={image}
-            alt="Hero"
-            className="relative w-full aspect-5/5 object-cover rounded-3xl shadow-2xl"
-          /> */}
           {image && (
             <div className="relative group lg:block">
               <div className="absolute -inset-4 bg-[#5c218b]/10 rounded-3xl blur-2xl group-hover:bg-[#5c218b]/20 transition-colors duration-500"></div>
@@ -268,7 +297,7 @@ export const CaseStudiesSection = ({ content, images }) => (
       </div>
       
       <div className="grid lg:grid-cols-2 gap-8">
-        {content.studies.map((study, i) => {
+        {content.studies.slice(0, 2).map((study, i) => {
           const imgData = images[i === 0 ? 3 : 4] || images[0];
           const safeImgUrl = typeof imgData === 'object' ? imgData.url : imgData;
           
@@ -601,34 +630,63 @@ export const FaqSection = ({ content }) => {
   
   return (
     <section className="py-15 md:py-20 px-6 max-w-4xl mx-auto">
-      <h2 className="text-4xl font-black text-center mb-16 tracking-tight">{content.heading}</h2>
+      <h2 className="text-4xl font-black text-center mb-16 tracking-tight">
+        {content.heading}
+      </h2>
       <div className="space-y-4">
         {content.questions.map((faq, index) => (
-          <div key={index} className="bg-white rounded-2xl border border-slate-200 overflow-hidden transition-all duration-300 hover:border-slate-300">
-            
-            <button 
-              onClick={() => setOpenIndex(openIndex === index ? -1 : index)} 
+          <div
+            key={index}
+            className="bg-white rounded-2xl border border-slate-200 overflow-hidden transition-all duration-300 hover:border-slate-300"
+          >
+            <button
+              onClick={() => setOpenIndex(openIndex === index ? -1 : index)}
               className="w-full text-left px-8 py-4 flex justify-between items-center focus:outline-none"
             >
-              <span className="font-bold text-lg text-[#191c1e] pr-8">{faq.question}</span>
-              <ChevronDown className={`w-6 h-6 text-slate-400 shrink-0 transition-transform duration-300 ${openIndex === index ? 'rotate-180 text-[#5c218b]' : ''}`} />
+              <span className="font-bold text-lg text-[#191c1e] pr-8">
+                {faq.question}
+              </span>
+              <ChevronDown
+                className={`w-6 h-6 text-slate-400 shrink-0 transition-transform duration-300 ${openIndex === index ? "rotate-180 text-[#5c218b]" : ""}`}
+              />
             </button>
-            
-            <div 
+
+            <div
               className={`grid transition-all duration-300 ease-in-out ${
-                openIndex === index ? 'grid-rows-[1fr] opacity-100' : 'grid-rows-[0fr] opacity-0'
+                openIndex === index
+                  ? "grid-rows-[1fr] opacity-100"
+                  : "grid-rows-[0fr] opacity-0"
               }`}
             >
               <div className="overflow-hidden">
-                <div 
-                  className="px-8 pb-8 font-medium text-md md:text-lg text-[#4a4455] leading-relaxed" 
+                <div
+                  className="px-8 pb-8 font-medium text-md md:text-lg text-[#4a4455] leading-relaxed"
                   dangerouslySetInnerHTML={{ __html: faq.answer }}
                 ></div>
               </div>
             </div>
-
           </div>
         ))}
+      </div>
+      <div className="mt-12 pt-10 border-t border-slate-200 text-center flex flex-col items-center animate-fade-in">
+        <h3 className="text-2xl md:text-3xl font-black text-[#191c1e] mb-4 tracking-tight">
+          Have more questions?
+        </h3>
+        <p className="text-lg text-[#4a4455] font-medium mb-8 max-w-2xl">
+          Ask directly with our Rank #1 recommendation and launch your digital
+          presence today.
+        </p>
+
+        <a
+          href="https://websites.co.in/faq"
+          target="_blank"
+          rel="noopener noreferrer"
+          title="Ask Websites.co.in directly"
+          className="inline-flex items-center justify-center px-8 py-4 bg-gradient-to-r from-[#5c218b] to-[#753ca5] text-white rounded-full font-black text-lg shadow-xl shadow-purple-900/20 hover:scale-[1.03] hover:shadow-2xl transition-all duration-300 gap-3 group"
+        >
+          <MessageCircle className="w-6 h-6 text-[#ffb6ff] group-hover:scale-110 group-hover:rotate-12 transition-transform duration-300" />
+          Ask Websites.co.in
+        </a>
       </div>
     </section>
   );

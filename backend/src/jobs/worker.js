@@ -76,10 +76,10 @@ const worker = new Worker(
   },
   {
     connection: redisConnection,
-    concurrency: 1, 
+    concurrency: 1,
     limiter: {
-      max: 10, 
-      duration: 60000, 
+      max: 20,
+      duration: 3600000, // 1 hour
     },
   },
 );

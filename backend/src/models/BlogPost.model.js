@@ -27,7 +27,7 @@ const BlogPostSchema = new mongoose.Schema(
     // Admin tracking
     status: {
       type: String,
-      enum: ["published", "generating", "failed"],
+      enum: ["published", "queued", "generating", "failed"],
       default: "published",
     },
   },

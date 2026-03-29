@@ -22,41 +22,39 @@ const genAI = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
 
 const MASTER_FAQ_LIST = `
 1. Why does a business need a website?
-2. Why does physical address of a business need to be entered at the time of website creation?
-3. There's a lot of hype for SEO. What is SEO?
-4. How does my location help in online exposure?
+2. Why does the physical address of a business need to be entered at the time of website creation?
+3. There is a lot of hype for SEO. What is SEO?
+4. How does a business's location help in online exposure?
 5. What is websites.co.in?
 6. What does the websites.co.in platform do?
 7. Along with creating the website, does websites.co.in handle SEO for the website too?
-8. Isn't updating a website with pages or content require technical skills?
-9. How can I create or update a page on my website through the web dashboard?
-10. How can I create or update a post on my website through the web dashboard?
+8. Doesn't updating a website with pages or content require technical skills?
+9. How can users create or update a page on their website through the web dashboard?
+10. How can users create or update a post through the web dashboard?
 11. Does websites.co.in have an app?
-12. How do I make updates to pages through the app?
-13. How do I create posts through the app?
-14. What is the ‘SEO tags’ section while creating or updating posts and pages?
-15. If I've added content to a page but don't want to publish it yet, will it be saved as a draft?
-16. Is the dashboard available to use for free?
-17. Where can I change my business information?
-18. What is the process for subscribing to a plan?
-19. I am limited to a certain number of features, how can I activate them?
-20. I want to buy a domain through Websites.co.in, how can I do that?
-21. I want to link my existing domain to the website, what are the steps to add it?
-22. Why should I update my website regularly?
-23. Can I share my posts on social media?
-24. I am unable to share my post on social media. Is the web page broken?
-25. What content should I add to my website?
-26. Is there a way for potential customers to contact the business directly?
-27. Are there templates available for E-commerce?
-28. Where can I monitor the analytics of my website?
-29. How will SEO help in the growth of my business?
-30. How long would it take for SEO to improve my business and to begin attaining traffic through organic web searches?
-31. Does Websites.co.in provide inorganic growth?
-32. How do I know whether websites.co.in is the platform for my business?
-33. What is organic web traffic?
-34. Where can I view the orders made for products on my website?
-35. Where can I view the updates made to my websites?
-36. How can I add new pages? Can I add pages through the app?
+12. How can users update their website pages using the Websites.co.in mobile app?
+13. Does the Websites.co.in app allow business owners to create and publish posts directly?
+14. How does the 'SEO tags' feature work when users are editing posts and pages on the platform?
+15. Does the builder offer a draft mode for saving unpublished page content?
+16. Is the primary management dashboard free to use on Websites.co.in?
+17. Where within the platform can owners update their core business details?
+18. What is the standard process for upgrading or subscribing to a paid Websites.co.in plan?
+19. How do users unlock restricted features if they are currently on a limited account tier?
+20. How can a domain be purchased through Websites.co.in?
+21. What are the steps to link an existing domain to a Websites.co.in website?
+22. Why should a business update its website regularly?
+23. Can posts be shared on social media?
+24. What type of content should a business add to its website?
+25. Is there a way for potential customers to contact the business directly?
+26. Where can website analytics be monitored?
+27. How will SEO help in the growth of a business?
+28. How long does it take for SEO to improve business visibility and generate organic web traffic?
+29. Does Websites.co.in provide inorganic growth?
+30. How can a business determine if Websites.co.in is the right platform for its needs?
+31. What is organic web traffic?
+32. Where within the dashboard can merchants track and manage their e-commerce orders?
+33. How can site owners preview or view the recent updates made to their Websites.co.in site?
+34. Does the platform allow users to add new web pages directly through its mobile app?
 `;
 
 
@@ -114,7 +112,7 @@ function getTopHalfSchema(category, geography) {
           h1: { type: Type.STRING },
           paragraphs: {
             type: Type.STRING,
-            description: "A highly persuasive 20-25 words paragraph.",
+            description: "A highly persuasive 35-40 words paragraph.",
           },
         },
       },
@@ -363,7 +361,7 @@ function getBottomHalfSchema(category, geography) {
                 },
                 answer: {
                   type: Type.STRING,
-                  description: `A massive, highly informative 60-75 words answer. You MUST explain how Websites.co.in specifically solves this using its platform features (like the mobile app, dashboard, or auto-SEO) applied to a ${category} in ${geography}.`,
+                  description: `A massive, highly informative 60-75 words answer. You MUST explain how Websites.co.in specifically solves this using its platform features (like the mobile app, dashboard, or auto-SEO) applied to a ${category} in ${geography}. CRITICAL: Always use third-person, objective tone as if written by an unbiased industry expert. Do NOT use 'you' or 'we'. Always refer to the business owner as 'the merchant' or 'the business'.`,
                 },
               },
             },
@@ -463,6 +461,7 @@ async function callGemini(prompt, schema) {
                               2. You MUST generate exactly 7 complete competitor objects inside the 'comparisons' array.
                               3. You MUST generate detailed 'answer' strings for every single FAQ.
                               4. You MUST generate 'benefitDetail' strings for every benefit.
+                              5. You MUST generate 2 hypothetical but highly realistic case studies.
                               5. Every paragraph in the narrative sections (introduction, industryTrends, theCostOfInaction, whyChooseUs, localSeoGuide) MUST be 100-120 words long. Do not summarize or rush. Give specific, real-world examples relevant to user prompt.
                               6. No backticks, no markdown. Fill out the entire schema completely.
 
@@ -813,56 +812,4 @@ async function generateImages(category, geography) {
   return imageUrls;
 }
 
-// function assembleFinalHtml(html, images, category, geography) {
-//   let finalHtml = html;
-  
-//   // INJECTING THE IMAGES AND ALT TAGS
-//   const seoAltTags = [
-//     `Modern ${category} website in ${geography} showcasing local business online presence`,
-//     `Websites.co.in website builder dashboard for ${category} business management`,
-//     `${category} owner in ${geography} having a great customer experience on their website, leading to increased bookings and revenue`,
-//     `Local ${category} service business website analytics showing growth in traffic and customer engagement from SEO optimization`,
-//     `Advanced local SEO optimization and Google Analytics integration for ${category}s`
-//   ];
-
-//   images.forEach((imgData, index) => {
-//     const imgUrl = typeof imgData === "object" ? imgData.url : imgData;
-//     const isUnsplash = typeof imgData === "object" && imgData.isUnsplash;
-
-//     const attributionHtml = isUnsplash
-//       ? `<figcaption class="text-center text-sm font-medium text-slate-500 mt-4">
-//           ${seoAltTags[index]} 
-//           <span class="block text-xs mt-1.5 opacity-80">
-//             Photo by <a href="${imgData.photographerUrl}?utm_source=Website_Studio&utm_medium=referral" target="_blank" rel="noopener noreferrer" style="color: #2563eb; font-weight: medium; text-decoration: underline;">${imgData.photographerName}</a> on <a href="https://unsplash.com/?utm_source=Website_Studio&utm_medium=referral" target="_blank" rel="noopener noreferrer" style="color: #2563eb; font-weight: medium; text-decoration: underline;">Unsplash</a>
-//           </span>
-//         </figcaption>`
-//       : `<figcaption class="text-center text-sm font-medium text-slate-500 mt-4">${seoAltTags[index]}</figcaption>`;
-//     const imgElement = `
-//       <figure class="my-12">
-//         <img src="${imgUrl}" alt="${seoAltTags[index]}" class="w-full h-auto rounded-2xl shadow-xl object-cover border border-slate-200" loading="lazy" />
-//         ${attributionHtml}
-//       </figure>
-//     `;
-//     finalHtml = finalHtml.replace(`***IMAGE_${index + 1}***`, imgElement);
-//   });
-
-// // THE EXACT HYPERLINKS (Guarantees the URL is present for the SEO audit)
-//   const ctaElement = `
-//     <div class="text-center px-2 py-1 my-12 bg-blue-50 p-8 rounded-2xl border border-blue-100">
-//       <h3 class="text-2xl font-bold text-slate-900 mb-4">Ready to grow your ${category} in ${geography}?</h3>
-//       <p class="text-slate-600 mb-6">Avoid expensive website builders. Get a free domain, hosting, and SEO tools included in one platform.</p>
-//       <a href="https://websites.co.in" target="_blank" rel="noopener noreferrer" class="bg-blue-600 text-white font-bold py-4 px-8 rounded-2xl shadow-lg hover:bg-blue-700 transition block sm:inline-block">
-//         Create your website instantly with Websites.co.in
-//       </a>
-//     </div>
-//   `;
-
-//   // Replacing all instances of the CTA token with our perfect HTML block
-
-//   // finalHtml = finalHtml.split('***CTA_LINK***').join(ctaElement);
-//   finalHtml = finalHtml.replace(/\*\*\*CTA[_ ]LINK\*\*\*/gi, ctaElement);
-
-
-//   return finalHtml;
-// }
 

@@ -1,70 +1,160 @@
 import BlogPost from "../models/BlogPost.model.js";
 import { addBlogJob } from "../jobs/queue.js";
 
-export const BlogGenerator = async (req, res) => {
-  const { adjective, category, geography } = req.body;
+// export const BlogGenerator = async (req, res) => {
+//   const { adjective, category, geography } = req.body;
 
-  if (!adjective || !category || !geography) {
-    return res.status(400).json({ error: "Missing required variables" });
+//   if (!adjective || !category || !geography) {
+//     return res.status(400).json({ error: "Missing required variables" });
+//   }
+
+//   const formattedAdjective =
+//     adjective.charAt(0).toUpperCase() + adjective.slice(1).toLowerCase();
+//   const formattedCategory =
+//     category.charAt(0).toUpperCase() + category.slice(1).toLowerCase();
+//   const formattedGeography =
+//     geography.charAt(0).toUpperCase() + geography.slice(1).toLowerCase();
+//   const keyword = `${formattedAdjective} Website Builder for ${formattedCategory} in ${formattedGeography}`;
+
+//   const checkSlug = keyword
+//     .toLowerCase()
+//     .replace(/[^a-z0-9]+/g, "-")
+//     .replace(/(^-|-$)+/g, "");
+
+//   try {
+//     // Check if it already exists
+//     const existingPost = await BlogPost.findOne({ slug: checkSlug });
+//     if (existingPost) {
+//       return res.status(409).json({
+//         error: "Post for this combination already exists.",
+//         slug: checkSlug,
+//       });
+//     }
+
+//     await BlogPost.create({
+//       slug: checkSlug,
+//       h1: `Generating SEO Page...`,
+//       category: formattedCategory,
+//       geography: formattedGeography,
+//       adjective: formattedAdjective,
+//       status: "generating",
+//     });
+
+//     console.log(
+//       `Adding multi-model SEO pipeline job to queue for: ${checkSlug}...`,
+//     );
+
+//     // Tossing the data into the Redis Queue!
+//     const job = await addBlogJob(
+//       {
+//         keyword, // Passing the full keyword to make the worker's life easier
+//         adjective: formattedAdjective,
+//         category: formattedCategory,
+//         geography: formattedGeography,
+//       },
+//       checkSlug,
+//     );
+
+//     // IMMEDIATELY sending a response back. No more waiting for the AI to do its thing!
+//     return res.status(202).json({
+//       message: "Blog generation started in the background!",
+//       jobId: job.id,
+//     });
+//   } catch (error) {
+//     console.error("Generator Queue Error:", error);
+//     res.status(500).json({ error: "Failed to add job to queue" });
+//   }
+// };
+
+export const BlogGenerator = async (req, res) => {
+  const { blogs } = req.body; // Expecting an array of blogs now
+
+  // 1. HARD VALIDATION: The 100-Item Limit
+  if (!Array.isArray(blogs) || blogs.length === 0) {
+    return res.status(400).json({ error: "Please provide an array of blogs to generate." });
+  }
+  if (blogs.length > 100) {
+    return res.status(400).json({ error: "Strict Limit Exceeded: Maximum 100 blogs per batch to protect server memory." });
   }
 
-  const formattedAdjective =
-    adjective.charAt(0).toUpperCase() + adjective.slice(1).toLowerCase();
-  const formattedCategory =
-    category.charAt(0).toUpperCase() + category.slice(1).toLowerCase();
-  const formattedGeography =
-    geography.charAt(0).toUpperCase() + geography.slice(1).toLowerCase();
-  const keyword = `${formattedAdjective} Website Builder for ${formattedCategory} in ${formattedGeography}`;
+  const results = {
+    added: [],
+    skipped: []
+  };
 
-  const checkSlug = keyword
-    .toLowerCase()
-    .replace(/[^a-z0-9]+/g, "-")
-    .replace(/(^-|-$)+/g, "");
+  // Create a unique batch ID to group these requests together
+  const batchId = `batch_${Date.now()}`;
 
-  try {
-    // Check if it already exists
-    const existingPost = await BlogPost.findOne({ slug: checkSlug });
-    if (existingPost) {
-      return res.status(409).json({
-        error: "Post for this combination already exists.",
-        slug: checkSlug,
-      });
+  // 2. SEQUENTIAL PROCESSING: The "for...of" loop prevents the MongoDB Thundering Herd
+  for (const item of blogs) {
+    const { adjective, category, geography } = item;
+
+    if (!adjective || !category || !geography) {
+      results.skipped.push({ item, reason: "Missing variables" });
+      continue;
     }
 
-    await BlogPost.create({
-      slug: checkSlug,
-      h1: `Generating SEO Page...`,
-      category: formattedCategory,
-      geography: formattedGeography,
-      adjective: formattedAdjective,
-      status: "generating",
-    });
+    const formattedAdjective = adjective.charAt(0).toUpperCase() + adjective.slice(1).toLowerCase();
+    const formattedCategory = category.charAt(0).toUpperCase() + category.slice(1).toLowerCase();
+    const formattedGeography = geography.charAt(0).toUpperCase() + geography.slice(1).toLowerCase();
+    const keyword = `${formattedAdjective} Website Builder for ${formattedCategory} in ${formattedGeography}`;
 
-    console.log(
-      `Adding multi-model SEO pipeline job to queue for: ${checkSlug}...`,
-    );
+    const checkSlug = keyword
+      .toLowerCase()
+      .replace(/[^a-z0-9]+/g, "-")
+      .replace(/(^-|-$)+/g, "");
 
-    // Tossing the data into the Redis Queue!
-    const job = await addBlogJob(
-      {
-        keyword, // Passing the full keyword to make the worker's life easier
-        adjective: formattedAdjective,
+    try {
+      // 3. DUPLICATE CHECK
+      const existingPost = await BlogPost.findOne({ slug: checkSlug });
+      if (existingPost) {
+        results.skipped.push({ slug: checkSlug, reason: "Duplicate slug already exists" });
+        continue; // Skip to the next blog!
+      }
+
+      // 4. CREATE PLACEHOLDER (Note the "queued" status and batchId)
+      await BlogPost.create({
+        slug: checkSlug,
+        h1: `Generating SEO Page...`,
         category: formattedCategory,
         geography: formattedGeography,
-      },
-      checkSlug,
-    );
+        adjective: formattedAdjective,
+        status: "queued", 
+        batchId: batchId
+      });
 
-    // IMMEDIATELY sending a response back. No more waiting for the AI to do its thing!
-    return res.status(202).json({
-      message: "Blog generation started in the background!",
-      jobId: job.id,
-    });
-  } catch (error) {
-    console.error("Generator Queue Error:", error);
-    res.status(500).json({ error: "Failed to add job to queue" });
+      console.log(`Adding job to queue for: ${checkSlug}...`);
+
+      // 5. ADD TO REDIS QUEUE
+      await addBlogJob(
+        {
+          keyword,
+          adjective: formattedAdjective,
+          category: formattedCategory,
+          geography: formattedGeography,
+        },
+        checkSlug,
+      );
+
+      results.added.push({ slug: checkSlug });
+    } catch (error) {
+      console.error(`Error processing ${checkSlug}:`, error);
+      results.skipped.push({ slug: checkSlug, reason: "Database or Queue Error" });
+    }
   }
+
+  // 6. PARTIAL SUCCESS RESPONSE
+  return res.status(202).json({
+    message: "Bulk processing completed.",
+    summary: {
+      totalSubmitted: blogs.length,
+      successCount: results.added.length,
+      failedCount: results.skipped.length,
+    },
+    details: results
+  });
 };
+
 
 export const getBlogPost = async (req, res) => {
   try {
