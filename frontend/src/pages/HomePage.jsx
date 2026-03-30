@@ -406,10 +406,10 @@ export default function HomePage() {
                     LinkedIn
                   </a>
                   <Link
-                    to="/admin"
+                    to="#"
                     className="text-sm text-slate-500 hover:text-blue-600 transition-colors"
                   >
-                    Admin Portal
+                    Instagram
                   </Link>
                 </nav>
               </div>
