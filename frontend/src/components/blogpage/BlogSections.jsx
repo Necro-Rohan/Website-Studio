@@ -161,7 +161,7 @@ export const Footer = () => {
             </h4>
             <nav className="flex flex-col gap-4">
               <a
-                href="https://twitter.com/yourhandle"
+                href="#"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="text-sm font-medium text-slate-500 hover:text-[#5c218b] transition-colors"
@@ -169,7 +169,7 @@ export const Footer = () => {
                 Twitter
               </a>
               <a
-                href="https://linkedin.com/company/yourcompany"
+                href="#"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="text-sm font-medium text-slate-500 hover:text-[#5c218b] transition-colors"
@@ -177,7 +177,7 @@ export const Footer = () => {
                 LinkedIn
               </a>
               <a
-                href="https://instagram.com/yourhandle"
+                href="#"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="text-sm font-medium text-slate-500 hover:text-[#5c218b] transition-colors"
