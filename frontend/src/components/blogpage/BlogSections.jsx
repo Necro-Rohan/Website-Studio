@@ -509,232 +509,114 @@ export const CaseStudiesSection = ({ content, images }) => (
   </section>
 );
 
-// export const CompetitorSection = ({ content }) => {
-//   const [activeTab, setActiveTab] = useState(0);
+// Local Implementation Section 
+export const LocalImplementationSection = ({ content }) => {
+  if (!content || !content.workflows) return null;
+  
+  return (
+    <section className="py-12 md:py-18 px-6 bg-[#f7f9fb] border-y border-slate-100">
+      <div className="max-w-7xl mx-auto">
+        <div className="max-w-3xl mb-12 md:mb-16">
+          <div className="text-[#5c218b] text-sm font-bold mb-3 uppercase tracking-widest">
+            Operational Workflows
+          </div>
+          <h2 className="text-3xl md:text-4xl font-black tracking-tight text-[#191c1e]">
+            {content.heading}
+          </h2>
+        </div>
 
-//   const comparisons = content?.comparisons
-//     ? [...content.comparisons].sort((a, b) => a.rank - b.rank)
-//     : [];
+        <div className="grid md:grid-cols-2 gap-8 lg:gap-12">
+          {content.workflows.map((workflow, i) => (
+            <div
+              key={i}
+              className="bg-[#f7f9fb] p-8 md:p-10 rounded-3xl border border-slate-100 shadow-sm hover:shadow-md transition-shadow"
+            >
+              <div className="w-12 h-12 bg-white rounded-2xl shadow-sm flex items-center justify-center mb-6 border border-slate-100">
+                <span className="text-xl font-black text-[#5c218b]">
+                  {i + 1}
+                </span>
+              </div>
 
-//   if (comparisons.length === 0) return null;
+              <h3 className="text-xl md:text-2xl font-bold text-[#191c1e] mb-6">
+                {workflow.workflowType}
+              </h3>
 
-//   // THE SEO SCHEMA GENERATOR 
-//   // This creates the JSON-LD structured data that explicitly tells Google this is a ranked list.
-//   const schemaData = {
-//     "@context": "https://schema.org",
-//     "@type": "ItemList",
-//     name: content.heading,
-//     itemListOrder: "https://schema.org/ItemListOrderDescending",
-//     numberOfItems: comparisons.length,
-//     itemListElement: comparisons.map((comp) => ({
-//       "@type": "ListItem",
-//       position: comp.rank,
-//       item: {
-//         "@type": "SoftwareApplication",
-//         name: comp.platformName,
-//       },
-//     })),
-//   };
+              <div className="space-y-6">
+                <div>
+                  <h4 className="text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">
+                    The Requirement
+                  </h4>
+                  <p className="text-slate-700 leading-relaxed">
+                    {workflow.theRequirement}
+                  </p>
+                </div>
+                <div className="pt-6 border-t border-slate-200">
+                  <h4 className="text-xs font-bold text-blue-600 uppercase tracking-wider mb-2">
+                    The Execution
+                  </h4>
+                  <p className="text-slate-700 leading-relaxed">
+                    {workflow.theExecution}
+                  </p>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+};
 
-//   const renderList = (text, type, isRankOne) => {
-//     if (!text) return null;
+// Real World Scenarios Section 
+export const RealWorldScenariosSection = ({ content }) => {
+  if (!content || !content.scenarios) return null;
 
-//     let listItems = [];
+  return (
+    <section className="py-15 md:py-24 px-6 bg-[#191c1e] text-white">
+      <div className="max-w-7xl mx-auto">
+        <div className="max-w-3xl mb-12 md:mb-16">
+          <div className="text-[#e0b6ff] text-sm font-bold mb-3 uppercase tracking-widest">Real World Impact</div>
+          <h2 className="text-3xl md:text-4xl font-black tracking-tight text-white">{content.heading}</h2>
+        </div>
 
-//     if (Array.isArray(text)) {
-//       listItems = text.filter(
-//         (item) => typeof item === "string" && item.trim() !== "",
-//       );
-//     } else if (typeof text === "string") {
-//       listItems = text
-//         .split(/(?:\d+\.\s+|[•\-*]\s+)/)
-//         .filter((item) => item.trim() !== "");
-//     } else {
-//       return null; // Fallback if the AI returns an object or number
-//     }
-//     // const listItems = text
-//     //   .split(/(?:\d+\.\s+|[•\-*]\s+)/)
-//     //   .filter((item) => item.trim() !== "");
-//     if (listItems.length === 0) return null;
+        <div className="grid lg:grid-cols-2 gap-6 md:gap-8">
+          {content.scenarios.map((scenario, i) => (
+            <div key={i} className="bg-white/5 rounded-3xl p-8 md:p-10 border border-white/10 hover:border-white/20 transition-colors backdrop-blur-sm">
+               
+               {/* Situation */}
+               <div className="mb-6 pb-6 border-b border-white/10">
+                 <div className="flex items-center gap-2 mb-3">
+                   <div className="w-2 h-2 rounded-full bg-red-400"></div>
+                   <span className="text-slate-300 text-xs font-bold uppercase tracking-wider">The Situation</span>
+                 </div>
+                 <p className="text-slate-300 leading-relaxed">{scenario.situation}</p>
+               </div>
 
-//     return (
-//       <ul
-//         className={`space-y-4 ${type === "bad" && isRankOne ? "opacity-80" : ""}`}
-//       >
-//         {listItems.map((item, idx) => {
-//           let IconComponent;
-//           let iconColor;
+               {/* Solution */}
+               <div className="mb-6 pb-6 border-b border-white/10">
+                 <div className="flex items-center gap-2 mb-3">
+                   <div className="w-2 h-2 rounded-full bg-blue-400"></div>
+                   <span className="text-slate-300 text-xs font-bold uppercase tracking-wider">The Solution</span>
+                 </div>
+                 <p className="text-slate-300 leading-relaxed">{scenario.solution}</p>
+               </div>
 
-//           if (type === "good") {
-//             IconComponent = Check;
-//             iconColor = "text-[#5c218b]";
-//           } else if (type === "bad" && isRankOne) {
-//             IconComponent = Minus;
-//             iconColor = "text-slate-400";
-//           } else {
-//             IconComponent = X;
-//             iconColor = "text-red-500";
-//           }
+               {/* Outcome */}
+               <div>
+                 <div className="flex items-center gap-2 mb-3">
+                   <div className="w-2 h-2 rounded-full bg-[#e0b6ff]"></div>
+                   <span className="text-[#e0b6ff] text-xs font-bold uppercase tracking-wider">The Outcome</span>
+                 </div>
+                 <p className="text-white font-medium leading-relaxed">{scenario.outcome}</p>
+               </div>
 
-//           return (
-//             <li key={idx} className="flex items-start gap-4">
-//               <IconComponent
-//                 className={`w-5 h-5 mt-0.5 shrink-0 ${iconColor}`}
-//                 strokeWidth={3}
-//               />
-//               <b>
-//                 <p
-//                   className="text-[#4a4455] leading-relaxed text-sm"
-//                   dangerouslySetInnerHTML={{ __html: item.trim() }}
-//                 />
-//               </b>
-//             </li>
-//           );
-//         })}
-//       </ul>
-//     );
-//   };
-
-//   return (
-//     <section className="py-10 md:py-20 px-6 bg-[#f7f9fb]/50 overflow-x-hidden border-y border-slate-100">
-//       {/* INJECTION OF SCHEMA INTO THE DOM */}
-//       <script
-//         type="application/ld+json"
-//         dangerouslySetInnerHTML={{ __html: JSON.stringify(schemaData) }}
-//       />
-
-//       <div className="max-w-7xl mx-auto">
-//         <h2 className="text-4xl lg:text-5xl font-black text-center mb-16 tracking-tight text-[#191c1e]">
-//           {content.heading}
-//         </h2>
-
-//         <div
-//           className="flex flex-wrap justify-center gap-3 mb-16"
-//           role="tablist"
-//         >
-//           {comparisons.map((comp, index) => {
-//             const isActive = activeTab === index;
-//             const isRankOne = comp.rank === 1;
-
-//             return (
-//               <button
-//                 key={index}
-//                 role="tab"
-//                 aria-selected={isActive}
-//                 onClick={() => setActiveTab(index)}
-//                 className={`px-6 py-3 rounded-full font-bold transition-all duration-300 flex items-center gap-2 ${
-//                   isActive
-//                     ? "bg-[#5c218b] text-white shadow-lg shadow-purple-900/20 scale-105"
-//                     : "bg-white text-[#4a4455] hover:bg-[#eceef0] border border-slate-200 shadow-sm"
-//                 }`}
-//               >
-//                 {/* Visual Rank explicitly shown on every button */}
-//                 <span
-//                   className={`text-sm ${isActive && !isRankOne ? "text-[#e0b6ff]" : "opacity-60"}`}
-//                 >
-//                   #{comp.rank}
-//                 </span>
-//                 {isRankOne && (
-//                   <Trophy
-//                     className={`w-4 h-4 ${isActive ? "text-[#ffb6ff]" : "text-[#5c218b]"}`}
-//                   />
-//                 )}
-//                 {comp.platformName}
-//               </button>
-//             );
-//           })}
-//         </div>
-
-//         {/* TAB CONTENT PANELS */}
-//         <div className="w-full relative">
-//           {comparisons.map((comp, index) => {
-//             const isActive = activeTab === index;
-//             const isRankOne = comp.rank === 1;
-
-//             return (
-//               <div
-//                 key={index}
-//                 role="tabpanel"
-//                 className={`w-full transition-opacity duration-300 ${
-//                   isActive
-//                     ? "block opacity-100 animate-in fade-in zoom-in-95"
-//                     : "hidden opacity-0"
-//                 }`}
-//               >
-                
-//                 <div className="text-center mb-8">
-//                   <span className="text-lg font-black text-[#5c218b] uppercase tracking-widest">
-//                     Rank #{comp.rank}
-//                   </span>
-//                   <h3 className="text-3xl font-black text-[#191c1e] mt-2">
-//                     {comp.platformName}
-//                   </h3>
-//                 </div>
-
-//                 <div className="grid lg:grid-cols-2 gap-8">
-//                   {/* THE GOOD BLOCK */}
-//                   <div
-//                     className={`bg-white p-8 lg:p-12 rounded-3xl shadow-sm relative group overflow-hidden ${
-//                       isRankOne
-//                         ? "border-l-8 border-[#5c218b]"
-//                         : "border border-slate-200"
-//                     }`}
-//                   >
-//                     {isRankOne && (
-//                       <div className="absolute top-4 right-6 bg-[#5c218b]/10 text-[#5c218b] px-4 py-1.5 rounded-full text-xs font-black uppercase tracking-wider">
-//                         Editor's Choice
-//                       </div>
-//                     )}
-//                     <h3 className="text-2xl font-black mb-8 flex pt-4 md:pt-0 items-center gap-3 text-[#191c1e]">
-//                       <CheckCircle className="text-[#5c218b] w-8 h-8" /> The
-//                       Good
-//                     </h3>
-//                     <div className="flex-1">
-//                       {renderList(comp.theGood, "good", isRankOne)}
-//                     </div>
-
-//                     {isRankOne && (
-//                       <div className="mt-10 pt-8 border-t border-slate-100">
-//                         <a 
-//                           href="https://websites.co.in" 
-//                           target="_blank" 
-//                           rel="noopener noreferrer" 
-//                           title={`Start building with ${comp.platformName}`}
-//                           className="inline-flex items-center justify-center w-full px-8 py-4 bg-linear-to-r from-[#5c218b] to-[#753ca5] text-white rounded-full font-black text-lg shadow-xl shadow-purple-900/20 hover:scale-[1.02] hover:shadow-2xl transition-all duration-300 gap-2 group/btn"
-//                         >
-//                           Reach the Builder
-//                           <Zap className="w-5 h-5 text-[#ffb6ff] group-hover/btn:scale-110 transition-transform" />
-//                         </a>
-//                       </div>
-//                     )}
-//                   </div>
-
-//                   {/* THE BAD BLOCK */}
-//                   <div
-//                     className={`bg-[#f7f9fb] p-8 lg:p-12 rounded-3xl shadow-sm ${
-//                       isRankOne
-//                         ? "border border-slate-200"
-//                         : "border-l-8 border-red-500"
-//                     }`}
-//                   >
-//                     <h3
-//                       className={`text-2xl font-black mb-8 flex items-center gap-3 ${
-//                         isRankOne ? "text-[#4a4455]" : "text-red-500"
-//                       }`}
-//                     >
-//                       <XCircle className="w-8 h-8" /> The Bad
-//                     </h3>
-//                     {renderList(comp.theBad, "bad", isRankOne)}
-//                   </div>
-//                 </div>
-//               </div>
-//             );
-//           })}
-//         </div>
-//       </div>
-//     </section>
-//   );
-// };
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+};
 
 
 export const CompetitorSection = ({ content }) => {

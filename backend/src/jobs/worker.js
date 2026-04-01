@@ -78,7 +78,7 @@ const worker = new Worker(
     connection: redisConnection,
     concurrency: 1,
     limiter: {
-      max: 20,
+      max: 40,
       duration: 3600000, // 1 hour
     },
     lockDuration: 300000, // Telling BullMQ this job might take up to 5 minutes

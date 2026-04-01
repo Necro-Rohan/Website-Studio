@@ -2,25 +2,42 @@ import React, { useEffect, useState } from "react";
 import { useParams, Link } from "react-router-dom";
 import api from "../utils/api.js";
 
-// Import all our newly modularized sections!
 import {
   Navbar, Footer, HeroSection, IntroSection, TrendsSection,
   CostOfInactionSection, FeaturesSection, CaseStudiesSection,
   CompetitorSection, BenefitsSection, LocalSeoSection,
-  FaqSection, FinalCta, HowItWorksSection
+  FaqSection, FinalCta, HowItWorksSection, LocalImplementationSection, RealWorldScenariosSection
 } from "../components/blogpage/BlogSections.jsx";
 
 export default function BlogPage() {
   const { slug } = useParams();
-  const [post, setPost] = useState(null);
-  const [error, setError] = useState(false);
 
+  // SSR HYDRATION STATE
+  const [post, setPost] = useState(window.__INITIAL_BLOG_DATA__ || null);
+  const [error, setError] = useState(false);
+  const [loading, setLoading] = useState(!window.__INITIAL_BLOG_DATA__);
+
+  // DATA FETCHING LOGIC
   useEffect(() => {
-    api.get(`/blog/${slug}`)
-      .then((res) => setPost(res.data))
-      .catch(() => setError(true));
+    if (!post) {
+      api.get(`/blog/${slug}`)
+        .then((res) => {
+          setPost(res.data);
+          setLoading(false);
+        })
+        .catch(() => {
+          setError(true);
+          setLoading(false);
+        });
+    }
+
+    return () => {
+      window.__INITIAL_BLOG_DATA__ = null;
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [slug]);
 
+  // METADATA UPDATE LOGIC
   useEffect(() => {
     if (post) {
       document.title = post.metaTitle || post.h1;
@@ -34,28 +51,29 @@ export default function BlogPage() {
     }
   }, [post]);
 
+  // LOADING & ERROR STATES
   if (error) return <div className="min-h-screen flex items-center justify-center bg-[#f7f9fb]">Post Not Found</div>;
   
-  if (!post) return (
+  if (loading || !post) return (
     <div className="min-h-screen flex items-center justify-center bg-[#f7f9fb] animate-pulse text-[#5c218b] font-bold">
       Loading Premium Experience...
     </div>
   );
 
-  const formattedDate = new Date(post.createdAt).toLocaleDateString("en-US", {
-    month: "long",
-    day: "numeric",
-    year: "numeric",
-  });
-  
   const content = post.content;
   const images = post.images || [];
 
   // Checking for old blogs
   const isLegacyPost = !content || !content.introduction;
 
-
+  // Old Blogs 
   if (isLegacyPost) {
+    const formattedDate = new Date(post.createdAt).toLocaleDateString("en-US", {
+      month: "long",
+      day: "numeric",
+      year: "numeric",
+    });
+
     return (
       <div className="bg-[#f6f6f8] text-slate-900 font-sans antialiased min-h-screen overflow-x-hidden">
         {/* Legacy Header */}
@@ -151,7 +169,6 @@ export default function BlogPage() {
     );
   }
 
-  // For newer blogs, we render the full React experience with all the modular sections!
   return (
     <div className="bg-[#f7f9fb] text-[#191c1e] font-sans antialiased min-h-screen overflow-x-hidden selection:bg-[#753ca5] selection:text-white">
       <Navbar />
@@ -161,7 +178,14 @@ export default function BlogPage() {
         <TrendsSection content={content.industryTrends} image={images[1]} />
         <CostOfInactionSection content={content.theCostOfInaction} image={images[2]} />
         <FeaturesSection content={content.features} />
-        <CaseStudiesSection content={content.caseStudies} images={images} />
+        {content.caseStudies ? (
+          <CaseStudiesSection content={content.caseStudies} images={images} />
+        ) : (
+          <>
+            <LocalImplementationSection content={content.localImplementation} />
+            <RealWorldScenariosSection content={content.realWorldScenarios} />
+          </>
+        )}
         <CompetitorSection content={content.competitorComparison} />
         <BenefitsSection content={content.whyChooseUs} image={images[2] || images[0]} />
         <HowItWorksSection content={content.howItWorks} />

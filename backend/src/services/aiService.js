@@ -188,8 +188,8 @@ function getTopHalfSchema(adjective, category, geography) {
         IMPORTANT:
         - Use numbers in only 2-3 variants (not all)
         - Avoid repeating the same structure across pages
-        - Keep it punchy, clickable, and natural`
-        },
+        - Keep it punchy, clickable, and natural`,
+      },
       metaDescription: {
         type: Type.STRING,
         description: `SEO description under 160 chars. Write strictly in an objective, 3rd-person tone (never use 'we', 'our', or 'us'). DO NOT mention specific brand names. Instead, focus entirely on the value of finding the top 10 tools for the specific ${category} in ${geography} to entice clicks.`,
@@ -358,7 +358,7 @@ function getTopHalfSchema(adjective, category, geography) {
       "theCostOfInaction",
       "features",
       "localImplementation",
-      "caseStudies",
+      "realWorldScenarios",
     ],
   };
 }
