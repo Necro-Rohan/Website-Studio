@@ -93,7 +93,11 @@
 
 import fs from 'fs';
 import path from 'path';
+import { fileURLToPath } from "url";
 import BlogPost from '../models/BlogPost.model.js';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 // XSS HTML Sanitizer
 function escapeHtml(str) {
@@ -108,7 +112,7 @@ function escapeHtml(str) {
 
 export const renderSeoBlogPage = async (req, res) => {
   try {
-    const post = await BlogPost.findOne({ slug: req.params.slug });
+    const post = await BlogPost.findOne({ slug: req.params.slug }).lean();
     
     const indexPath = path.resolve(__dirname, '../../../frontend/dist/index.html');
     let htmlData = fs.readFileSync(indexPath, 'utf8');
