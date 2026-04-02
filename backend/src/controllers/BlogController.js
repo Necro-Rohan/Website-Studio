@@ -1,5 +1,5 @@
 import BlogPost from "../models/BlogPost.model.js";
-import { addBlogJob } from "../jobs/queue.js";
+import { addBlogQueue } from "../jobs/queue.js";
 
 
 export const BlogGenerator = async (req, res) => {
@@ -58,7 +58,7 @@ export const BlogGenerator = async (req, res) => {
 
       console.log(`Adding job to queue for: ${checkSlug}...`);
 
-      await addBlogJob(
+      await addBlogQueue(
         {
           keyword,
           adjective: formattedAdjective,

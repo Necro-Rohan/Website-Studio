@@ -23,7 +23,7 @@ export const blogQueue = new Queue('blog-generation-queue-test', {
 });
 
 // add jobs to the queue
-export async function addBlogJob(blogData, uniqueBlogId) {
+export async function addBlogQueue(blogData, uniqueBlogId) {
   const job = await blogQueue.add("generate-blog", blogData, {
     jobId: uniqueBlogId, // Ensuring uniqueness to prevent duplicates
     removeOnComplete: true, 

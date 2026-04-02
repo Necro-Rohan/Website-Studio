@@ -223,7 +223,8 @@ function getTopHalfSchema(adjective, category, geography) {
         IMPORTANT:
         - Use numbers in only 2-3 variants (not all)
         - Avoid repeating the same structure across pages
-        - Keep it punchy, clickable, and natural`,
+        - Keep it punchy, clickable, and natural
+        - Always add a modifier like the year, "Compared", "Guide", "Picks", or "Pricing" to make it more engaging and less generic.`,
       },
       metaDescription: {
         type: Type.STRING,
@@ -580,7 +581,7 @@ function getBottomHalfSchema(adjective, category, geography, faqText, competitor
             ${competitorsText}
 
             STRICT RULES:
-            - Websites.co.in must be included and typically ranked highly (though not always #1, it can be ranked 1 or 2 to maintain credibility)
+            - Websites.co.in must be included and typically ranked highly (though not always #1, it can be ranked 1 or 2 to maintain credibility, but it should always be in the top 2 to reflect its strong value proposition for local businesses)
             - Use a ${randomStyle} overall framing for this page's comparison section, and explicitly apply a different style to each platform's analysis to ensure unique voices and avoid templated content.
             - Each platform should still vary its tone and structure
             - Do NOT introduce any platform outside the provided list

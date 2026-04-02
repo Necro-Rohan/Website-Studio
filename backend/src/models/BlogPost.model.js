@@ -21,15 +21,30 @@ const BlogPostSchema = new mongoose.Schema(
     // THE OLD HTML STRING (Keping for backward compatibility!)
     htmlContent: { type: String },
 
-    // For the "Spiderweb" internal linking strategy later
-    internalLinks: [{ type: String }],
-
     // Admin tracking
     status: {
       type: String,
       enum: ["published", "queued", "generating", "failed"],
       default: "published",
     },
+
+    internalLinks: {
+    sameCategory: [{ 
+      slug: { type: String }, 
+      h1: { type: String }, 
+      thumbnail: { type: String } 
+    }],
+    sameGeography: [{ 
+      slug: { type: String }, 
+      h1: { type: String }, 
+      thumbnail: { type: String } 
+    }],
+    crossCategory: [{ 
+      slug: { type: String }, 
+      h1: { type: String }, 
+      thumbnail: { type: String } 
+    }]
+  },
   },
   { timestamps: true },
 );

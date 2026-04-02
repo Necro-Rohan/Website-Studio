@@ -1,9 +1,10 @@
-import { Worker } from 'bullmq';
-import Redis from 'ioredis';
-import dotenv from 'dotenv';
-import BlogPost from '../models/BlogPost.model.js';
-import { generateSEOContentPipeline } from '../services/aiService.js'; 
-import connectDb from '../../db.js';
+import { Worker } from "bullmq";
+import Redis from "ioredis";
+import dotenv from "dotenv";
+import BlogPost from "../models/BlogPost.model.js";
+import { generateSEOContentPipeline } from "../services/aiService.js";
+import connectDb from "../../db.js";
+import { generateInternalLinks } from "../utils/internalLinking.js";
 
 dotenv.config();
 
@@ -40,6 +41,21 @@ const worker = new Worker(
             : generatedData.images[0];
       }
 
+      const allPosts = await BlogPost.find({ status: "published" })
+        .select("slug category geography h1 coverImage")
+        .lean();
+
+      //"current post" payload to pass into the scoring algorithm
+      const currentPostData = {
+        slug: slug,
+        category: category,
+        geography: geography,
+        h1: generatedData.h1,
+        coverImage: coverImage,
+      };
+
+      const internalLinks = generateInternalLinks(currentPostData, allPosts);
+
       // const sanitizedImages = generatedData.images.map((img) => {
       //   return typeof img === "string" ? img : img.url;
       // });
@@ -54,6 +70,7 @@ const worker = new Worker(
             content: generatedData.content,
             images: generatedData.images,
             coverImage: coverImage,
+            internalLinks: internalLinks,
             status: "published", // Turn the yellow badge green!
           },
         },
@@ -87,11 +104,13 @@ const worker = new Worker(
   },
 );
 
-worker.on('failed', (job, err) => {
-  console.log(`Job ${job.id} has permanently failed after retries with error ${err.message}`);
+worker.on("failed", (job, err) => {
+  console.log(
+    `Job ${job.id} has permanently failed after retries with error ${err.message}`,
+  );
 });
 
-worker.on('stalled', (jobId) => {
+worker.on("stalled", (jobId) => {
   console.warn(`Job ${jobId} STALLED! The AI is taking longer than expected.`);
 });
 
