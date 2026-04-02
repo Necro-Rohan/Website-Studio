@@ -18,23 +18,37 @@ export function generateInternalLinks(currentPost, allPosts) {
   const extractData = (s) => ({
     slug: s.post.slug,
     h1: s.post.h1,
-    thumbnail: s.post.coverImage || null, 
+    thumbnail: s.post.coverImage || null,
   });
 
+  const sameCategory = scored
+    .filter((s) => s.post.category === currentPost.category)
+    .slice(0, 3)
+    .map(extractData);
+
+  const sameGeography = scored
+    .filter((s) =>
+        s.post.geography === currentPost.geography &&
+        s.post.category !== currentPost.category)
+    .slice(0, 3)
+    .map(extractData);
+
+  const used = new Set([
+    ...sameCategory.map((p) => p.slug),
+    ...sameGeography.map((p) => p.slug),
+  ]);
+
+  const crossCategory = scored
+    .filter((s) =>
+        s.post.category !== currentPost.category &&
+        !used.has(s.post.slug) &&
+        (s.post.geography === currentPost.geography || s.score > 0))
+    .slice(0, 2)
+    .map(extractData);
+
   return {
-    sameCategory: scored
-      .filter((s) => s.post.category === currentPost.category)
-      .slice(0, 3)
-      .map(extractData),
-
-    sameGeography: scored
-      .filter((s) => s.post.geography === currentPost.geography)
-      .slice(0, 3)
-      .map(extractData),
-
-    crossCategory: scored
-      .filter((s) => s.post.category !== currentPost.category)
-      .slice(0, 2)
-      .map(extractData),
+    sameCategory,
+    sameGeography,
+    crossCategory,
   };
 }

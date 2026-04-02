@@ -1,26 +1,37 @@
 import React, { useEffect, useState } from "react";
 import { useParams, Link } from "react-router-dom";
 import api from "../utils/api.js";
+import { AlertTriangle, Home } from "lucide-react";
 
 import {
   Navbar, Footer, HeroSection, IntroSection, TrendsSection,
   CostOfInactionSection, FeaturesSection, CaseStudiesSection,
   CompetitorSection, BenefitsSection, LocalSeoSection,
-  FaqSection, FinalCta, HowItWorksSection, LocalImplementationSection, RealWorldScenariosSection
+  FaqSection, FinalCta, HowItWorksSection, LocalImplementationSection, RealWorldScenariosSection, RelatedPostsSection
 } from "../components/blogpage/BlogSections.jsx";
 
 export default function BlogPage() {
   const { slug } = useParams();
 
+  const initialData =
+    window.__INITIAL_BLOG_DATA__?.slug === slug
+      ? window.__INITIAL_BLOG_DATA__
+      : null;
+
   // SSR HYDRATION STATE
-  const [post, setPost] = useState(window.__INITIAL_BLOG_DATA__ || null);
+  const [post, setPost] = useState(initialData);
   const [error, setError] = useState(false);
-  const [loading, setLoading] = useState(!window.__INITIAL_BLOG_DATA__);
+  const [loading, setLoading] = useState(!initialData);
 
   // DATA FETCHING LOGIC
   useEffect(() => {
-    if (!post) {
-      api.get(`/blog/${slug}`)
+    // To Automatically scroll to the top when a user clicks a related link!
+    window.scrollTo(0, 0);
+
+    if (!post || post.slug !== slug) {
+      setLoading(true);
+      api
+        .get(`/blog/${slug}`)
         .then((res) => {
           setPost(res.data);
           setLoading(false);
@@ -52,11 +63,97 @@ export default function BlogPage() {
   }, [post]);
 
   // LOADING & ERROR STATES
-  if (error) return <div className="min-h-screen flex items-center justify-center bg-[#f7f9fb]">Post Not Found</div>;
-  
+  if (error) {
+    return (
+      <div className="min-h-screen bg-[#f7f9fb] flex flex-col items-center justify-center px-6">
+        <div className="bg-white p-8 md:p-12 rounded-3xl shadow-xl max-w-lg w-full text-center border border-slate-100">
+          <div className="w-20 h-20 bg-red-50 rounded-full flex items-center justify-center mx-auto mb-6">
+            <AlertTriangle className="w-10 h-10 text-red-500" />
+          </div>
+          <h1 className="text-3xl font-black text-[#191c1e] mb-4 tracking-tight">
+            Post Not Found
+          </h1>
+          <p className="text-[#4a4455] text-lg mb-8 leading-relaxed">
+            We couldn't find the guide you're looking for. It may have been
+            moved, deleted, or the URL might be incorrect.
+          </p>
+          <Link
+            to="/"
+            className="inline-flex items-center justify-center w-full px-8 py-4 bg-[#5c218b] text-white rounded-full font-bold text-lg hover:bg-[#4a1a70] transition-colors gap-2 group"
+          >
+            <Home className="w-5 h-5 group-hover:scale-110 transition-transform duration-500" />
+            Back to Home
+          </Link>
+        </div>
+      </div>
+    );
+  }
+
   if (loading || !post) return (
-    <div className="min-h-screen flex items-center justify-center bg-[#f7f9fb] animate-pulse text-[#5c218b] font-bold">
-      Loading Premium Experience...
+    <div className="min-h-screen bg-[#f7f9fb] overflow-hidden">
+      {/* Navbar */}
+      <header className="sticky top-0 z-50 w-full bg-white border-b border-slate-200">
+        <div className="mx-auto flex h-18 max-w-7xl items-center justify-between px-6 animate-pulse">
+          <div className="flex gap-3 items-center">
+            <div className="w-9 h-9 rounded-lg bg-slate-200"></div>
+            <div className="w-32 h-6 rounded-md bg-slate-200 hidden sm:block"></div>
+          </div>
+          <div className="w-28 h-10 rounded-lg bg-slate-200"></div>
+        </div>
+      </header>
+
+      {/* Hero Section */}
+      <div className="pt-24 pb-20 px-6 max-w-7xl mx-auto animate-pulse">
+        {/* Breadcrumbs */}
+        <div className="w-48 h-4 bg-slate-200 rounded-full mb-8"></div>
+        
+        <div className="grid lg:grid-cols-2 gap-16 items-center">
+          {/* Left Text Column */}
+          <div>
+            <div className="space-y-4 mb-8">
+              <div className="h-12 sm:h-16 bg-slate-200 rounded-xl w-full"></div>
+              <div className="h-12 sm:h-16 bg-slate-200 rounded-xl w-5/6"></div>
+              <div className="h-12 sm:h-16 bg-slate-200 rounded-xl w-2/3"></div>
+            </div>
+            <div className="space-y-3 mb-10">
+              <div className="h-5 bg-slate-200 rounded-full w-full"></div>
+              <div className="h-5 bg-slate-200 rounded-full w-11/12"></div>
+              <div className="h-5 bg-slate-200 rounded-full w-4/5"></div>
+            </div>
+            {/* Author Block */}
+            <div className="flex items-center gap-4">
+              <div className="w-12 h-12 rounded-full bg-slate-200 shrink-0"></div>
+              <div className="space-y-2">
+                <div className="h-4 bg-slate-200 rounded-full w-32"></div>
+                <div className="h-3 bg-slate-200 rounded-full w-48"></div>
+              </div>
+            </div>
+          </div>
+          
+          {/* Right Image Column */}
+          <div className="hidden lg:block">
+            <div className="w-full aspect-square bg-slate-200 rounded-3xl"></div>
+          </div>
+        </div>
+      </div>
+
+      <div className="py-24 px-6 bg-white border-y border-slate-100 animate-pulse">
+        <div className="max-w-7xl mx-auto grid lg:grid-cols-12 gap-12 items-center">
+          <div className="lg:col-span-7 space-y-5">
+            <div className="h-10 bg-slate-200 rounded-xl w-3/4 mb-8"></div>
+            <div className="h-5 bg-slate-200 rounded-full w-full"></div>
+            <div className="h-5 bg-slate-200 rounded-full w-full"></div>
+            <div className="h-5 bg-slate-200 rounded-full w-5/6 mb-6"></div>
+            <div className="h-4 bg-slate-200 rounded-full w-full"></div>
+            <div className="h-4 bg-slate-200 rounded-full w-4/5"></div>
+          </div>
+          
+          {/* Right Callout Box */}
+          <div className="lg:col-start-9 lg:col-span-4 hidden lg:block">
+            <div className="bg-slate-100 h-64 rounded-3xl w-full"></div>
+          </div>
+        </div>
+      </div>
     </div>
   );
 
@@ -66,7 +163,7 @@ export default function BlogPage() {
   // Checking for old blogs
   const isLegacyPost = !content || !content.introduction;
 
-  // Old Blogs 
+  // Old Blogs
   if (isLegacyPost) {
     const formattedDate = new Date(post.createdAt).toLocaleDateString("en-US", {
       month: "long",
@@ -106,7 +203,10 @@ export default function BlogPage() {
 
         <main className="mx-auto max-w-4xl px-4 md:px-6 py-8 md:py-12">
           <nav className="mb-4 md:mb-6 flex items-center gap-2 text-sm text-slate-500 font-medium">
-            <Link to="/" className="hover:text-blue-600 transition"> Home </Link>
+            <Link to="/" className="hover:text-blue-600 transition">
+              {" "}
+              Home{" "}
+            </Link>
             <span className="text-slate-300">/</span>
             <span className="text-slate-900">Blog</span>
           </nav>
@@ -119,8 +219,12 @@ export default function BlogPage() {
               </h1>
               <div className="flex items-center gap-4 text-sm text-slate-600">
                 <div className="flex items-center gap-2">
-                  <div className="w-8 h-8 rounded-full bg-slate-200 flex items-center justify-center font-bold text-slate-600">W</div>
-                  <span className="font-semibold text-slate-900">Websites Team</span>
+                  <div className="w-8 h-8 rounded-full bg-slate-200 flex items-center justify-center font-bold text-slate-600">
+                    W
+                  </div>
+                  <span className="font-semibold text-slate-900">
+                    Websites Team
+                  </span>
                 </div>
                 <span className="text-slate-300">|</span>
                 <span className="font-medium">Updated {formattedDate}</span>
@@ -150,11 +254,19 @@ export default function BlogPage() {
             <div className="absolute -top-24 -right-24 w-96 h-96 bg-blue-600 rounded-full blur-3xl opacity-20 pointer-events-none"></div>
             <div className="absolute -bottom-24 -left-24 w-96 h-96 bg-purple-600 rounded-full blur-3xl opacity-20 pointer-events-none"></div>
             <div className="relative z-10">
-              <h2 className="text-3xl font-black mb-6 tracking-tight">Ready to launch your {post.category} website?</h2>
+              <h2 className="text-3xl font-black mb-6 tracking-tight">
+                Ready to launch your {post.category} website?
+              </h2>
               <p className="text-slate-300 mb-10 max-w-lg mx-auto text-lg leading-relaxed">
-                Join thousands of businesses in {post.geography} growing their online presence with Websites.co.in. Launch in 15 minutes.
+                Join thousands of businesses in {post.geography} growing their
+                online presence with Websites.co.in. Launch in 15 minutes.
               </p>
-              <a href="https://websites.co.in" target="_blank" rel="noopener noreferrer" className="inline-block bg-blue-600 text-white font-bold py-4 px-10 rounded-xl hover:bg-blue-500 hover:scale-105 hover:shadow-blue-500/30 transition-all duration-300 shadow-lg text-lg">
+              <a
+                href="https://websites.co.in"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-block bg-blue-600 text-white font-bold py-4 px-10 rounded-xl hover:bg-blue-500 hover:scale-105 hover:shadow-blue-500/30 transition-all duration-300 shadow-lg text-lg"
+              >
                 Start Your Free Trial
               </a>
             </div>
@@ -163,7 +275,10 @@ export default function BlogPage() {
 
         {/* Legacy Footer */}
         <footer className="border-t border-slate-200 bg-slate-50 py-12 mt-12 text-center text-sm text-slate-500">
-          <p>© {new Date().getFullYear()} Website Studio | Smart Website Builder for Local Businesses. All rights reserved.</p>
+          <p>
+            © {new Date().getFullYear()} Website Studio | Smart Website Builder
+            for Local Businesses. All rights reserved.
+          </p>
         </footer>
       </div>
     );
@@ -176,7 +291,10 @@ export default function BlogPage() {
         <HeroSection content={content.hero} post={post} image={images[0]} />
         <IntroSection content={content.introduction} />
         <TrendsSection content={content.industryTrends} image={images[1]} />
-        <CostOfInactionSection content={content.theCostOfInaction} image={images[2]} />
+        <CostOfInactionSection
+          content={content.theCostOfInaction}
+          image={images[2]}
+        />
         <FeaturesSection content={content.features} />
         {content.caseStudies ? (
           <CaseStudiesSection content={content.caseStudies} images={images} />
@@ -187,10 +305,14 @@ export default function BlogPage() {
           </>
         )}
         <CompetitorSection content={content.competitorComparison} />
-        <BenefitsSection content={content.whyChooseUs} image={images[2] || images[0]} />
+        <BenefitsSection
+          content={content.whyChooseUs}
+          image={images[2] || images[0]}
+        />
         <HowItWorksSection content={content.howItWorks} />
         <LocalSeoSection content={content.localSeoGuide} />
         <FaqSection content={content.faqs} />
+        <RelatedPostsSection links={post.internalLinks} />
         <FinalCta post={post} />
       </main>
       <Footer />

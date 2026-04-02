@@ -247,7 +247,7 @@ export const Footer = () => {
 };
 
 export const FinalCta = ({ post }) => (
-  <section className="px-6 max-w-5xl mx-auto mb-24">
+  <section className="px-6 pt-15 md:pt-20 max-w-5xl mx-auto mb-24">
     <div className="relative bg-[#191c1e] rounded-3xl p-8 md:p-10 flex flex-col md:flex-row items-center justify-between overflow-hidden shadow-2xl border border-stone-800">
       {/* Subtle Purple Glow Effect for Sharpness */}
       <div className="absolute -top-24 -right-24 w-64 h-64 bg-[#5c218b] rounded-full filter blur-[100px] opacity-40 pointer-events-none"></div>
@@ -939,6 +939,139 @@ export const FaqSection = ({ content }) => {
           <MessageCircle className="w-6 h-6 text-[#ffb6ff] group-hover:scale-110 group-hover:rotate-12 transition-transform duration-300" />
           Ask Websites.co.in
         </a>
+      </div>
+    </section>
+  );
+};
+
+// Related Posts 
+export const RelatedPostsSection = ({ links }) => {
+  // SAFETY CHECK
+  if (!links || (!links.sameCategory?.length && !links.sameGeography?.length && !links.crossCategory?.length)) return null;
+
+  return (
+    <section className="py-15 md:py-20 px-6 bg-white border-t border-slate-100">
+      <div className="max-w-7xl mx-auto">
+        <div className="mb-12 md:mb-16 text-center">
+          <h2 className="text-3xl md:text-4xl font-black tracking-tight text-[#191c1e]">
+            Keep Exploring
+          </h2>
+          <p className="text-slate-500 mt-4 text-lg">
+            Discover more strategies for your business and location.
+          </p>
+        </div>
+
+        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8 lg:gap-12">
+          
+          {/* COLUMN 1, Same Category */}
+          {links.sameCategory && links.sameCategory.length > 0 && (
+            <div>
+              <div className="flex items-center gap-3 mb-8">
+                <div className="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center">
+                  <div className="w-3 h-3 bg-blue-600 rounded-full"></div>
+                </div>
+                <h3 className="text-xl font-bold text-slate-900">Similar Industries</h3>
+              </div>
+              
+              <div className="space-y-6">
+                {links.sameCategory.map((link) => (
+                  <Link 
+                    key={link.slug} 
+                    to={`/blog/${link.slug}`} 
+                    className="group flex gap-4 items-center bg-[#f7f9fb] p-3 rounded-2xl hover:bg-blue-50 transition-colors border border-transparent hover:border-blue-100"
+                  >
+                    <div className="w-20 h-20 shrink-0 overflow-hidden rounded-xl bg-slate-200">
+                      {link.thumbnail ? (
+                        <img src={link.thumbnail} alt={link.h1} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+                      ) : (
+                        <div className="w-full h-full bg-blue-100"></div>
+                      )}
+                    </div>
+                    <div>
+                      <h4 className="font-bold text-slate-800 leading-snug group-hover:text-blue-600 transition-colors line-clamp-2">
+                        {link.h1}
+                      </h4>
+                      <span className="text-sm font-medium text-blue-600 mt-1 inline-block opacity-0 group-hover:opacity-100 transition-opacity">Read Guide →</span>
+                    </div>
+                  </Link>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* COLUMN 2, Same Geography */}
+          {links.sameGeography && links.sameGeography.length > 0 && (
+            <div>
+              <div className="flex items-center gap-3 mb-8">
+                <div className="w-8 h-8 rounded-full bg-purple-100 flex items-center justify-center">
+                  <div className="w-3 h-3 bg-purple-600 rounded-full"></div>
+                </div>
+                <h3 className="text-xl font-bold text-slate-900">Local Strategies</h3>
+              </div>
+              
+              <div className="space-y-6">
+                {links.sameGeography.map((link) => (
+                  <Link 
+                    key={link.slug} 
+                    to={`/blog/${link.slug}`} 
+                    className="group flex gap-4 items-center bg-[#f7f9fb] p-3 rounded-2xl hover:bg-purple-50 transition-colors border border-transparent hover:border-purple-100"
+                  >
+                    <div className="w-20 h-20 shrink-0 overflow-hidden rounded-xl bg-slate-200">
+                      {link.thumbnail ? (
+                        <img src={link.thumbnail} alt={link.h1} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+                      ) : (
+                        <div className="w-full h-full bg-purple-100"></div>
+                      )}
+                    </div>
+                    <div>
+                      <h4 className="font-bold text-slate-800 leading-snug group-hover:text-purple-600 transition-colors line-clamp-2">
+                        {link.h1}
+                      </h4>
+                      <span className="text-sm font-medium text-purple-600 mt-1 inline-block opacity-0 group-hover:opacity-100 transition-opacity">Read Guide →</span>
+                    </div>
+                  </Link>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* COLUMN 3, Cross Category */}
+          {links.crossCategory && links.crossCategory.length > 0 && (
+            <div>
+              <div className="flex items-center gap-3 mb-8">
+                <div className="w-8 h-8 rounded-full bg-emerald-100 flex items-center justify-center">
+                  <div className="w-3 h-3 bg-emerald-600 rounded-full"></div>
+                </div>
+                <h3 className="text-xl font-bold text-slate-900">Explore Industries</h3>
+              </div>
+              
+              <div className="space-y-6">
+                {links.crossCategory.map((link) => (
+                  <Link 
+                    key={link.slug} 
+                    to={`/blog/${link.slug}`} 
+                    className="group flex gap-4 items-center bg-[#f7f9fb] p-3 rounded-2xl hover:bg-emerald-50 transition-colors border border-transparent hover:border-emerald-100"
+                  >
+                    <div className="w-20 h-20 shrink-0 overflow-hidden rounded-xl bg-slate-200">
+                      {link.thumbnail ? (
+                        <img src={link.thumbnail} alt={link.h1} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+                      ) : (
+                        <div className="w-full h-full bg-emerald-100"></div>
+                      )}
+                    </div>
+                    <div>
+                      <h4 className="font-bold text-slate-800 leading-snug group-hover:text-emerald-600 transition-colors line-clamp-2">
+                        {link.h1}
+                      </h4>
+                      <span className="text-sm font-medium text-emerald-600 mt-1 inline-block opacity-0 group-hover:opacity-100 transition-opacity">Read Guide →</span>
+                    </div>
+                  </Link>
+                ))}
+              </div>
+            </div>
+          )}
+
+        </div>
       </div>
     </section>
   );

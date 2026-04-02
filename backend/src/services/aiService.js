@@ -780,6 +780,8 @@ function getBottomHalfSchema(adjective, category, geography, faqText, competitor
             - Mention platforms like Websites.co.in naturally when relevant, but do not force promotion
             - Vary the wording of the steps across pages
             - Keep each step concise and actionable
+            - Generate EXACTLY 3 steps (no more, no less).
+            - stepNumber MUST be 1, 2, and 3 in order
 
             Suggested flow:
             1. Choose the right platform
@@ -790,13 +792,25 @@ function getBottomHalfSchema(adjective, category, geography, faqText, competitor
               properties: {
                 stepNumber: {
                   type: Type.NUMBER,
+                  description: "The step number in the process (1, 2, or 3)",
                 },
                 title: {
                   type: Type.STRING,
+                  description: "A concise title for this step (4-6 words)",
                 },
                 description: {
                   type: Type.STRING,
-                  description: `A concise 30-40 word explanation focused on what the business owner should do and why it matters.`,
+                  description: `
+                  Write a concise explanation (around 30-40 words).
+
+                  GUIDELINES:
+                  - Aim for approximately 30-40 words (do not strictly count)
+                  - Focus on what the business owner should do and why it matters
+                  - Keep it clear, natural, and readable
+
+                  IMPORTANT:
+                  - Do not artificially stretch or compress sentences just to hit a word count
+                  `,
                 },
               },
               required: ["stepNumber", "title", "description"],
