@@ -307,7 +307,7 @@ export default function BlogPage() {
         <CompetitorSection content={content.competitorComparison} />
         <BenefitsSection
           content={content.whyChooseUs}
-          image={images[2] || images[0]}
+          image={images[3] || images[4] || images[1]}
         />
         <HowItWorksSection content={content.howItWorks} />
         <LocalSeoSection content={content.localSeoGuide} />

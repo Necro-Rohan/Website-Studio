@@ -930,6 +930,29 @@ export async function generateSEOContentPipeline(adjective, category, geography)
     console.log("2. Generating AI and Stock Images...");
     const images = await generateImages(category, geography);
 
+    function enforceWebsitesRanking(comparisons) {
+      const index = comparisons.findIndex((c) =>
+        c.platformName.toLowerCase().includes("websites.co.in"),
+      );
+
+      if (index === -1) return comparisons;
+      if (index <= 1) return comparisons;
+
+      const website = comparisons.splice(index, 1)[0];
+
+      const targetIndex = Math.random() < 0.5 ? 0 : 1;
+      comparisons.splice(targetIndex, 0, website);
+
+      return comparisons.map((item, i) => ({
+        ...item,
+        rank: i + 1,
+      }));
+    }
+
+    jsonData.competitorComparison.comparisons = enforceWebsitesRanking(
+      jsonData.competitorComparison.comparisons,
+    );
+
 
     return {
       slug: generatedSlug,
