@@ -96,7 +96,7 @@ export default function HubPage({ type }) {
 
       <main className="grow">
         {/* Hub Hero Section (The "Value" Layer) */}
-        <div className="bg-[#191c1e] text-white pt-24 pb-20 px-6 border-b-[12px] border-[#5c218b]">
+        <div className="bg-[#191c1e] text-white pt-24 pb-20 px-6 border-b-12 border-[#5c218b]">
           <div className="max-w-7xl mx-auto">
             <div className="flex items-center gap-2 text-sm font-bold tracking-widest uppercase text-[#e0b6ff] mb-6">
               <Link to="/" className="hover:text-white transition-colors">
@@ -156,7 +156,7 @@ export default function HubPage({ type }) {
         </div>
 
         {/* Information Gain Section (What Works + Top Lists) */}
-        <div className="max-w-7xl mx-auto px-6 py-16 grid lg:grid-cols-3 gap-12 border-b border-slate-100">
+        <div className="max-w-7xl mx-auto px-6 pt-16 grid lg:grid-cols-3 gap-12 border-b border-slate-100">
           <div className="lg:col-span-2 space-y-6">
             <h2 className="text-3xl font-black text-slate-900">
               What Works in This Market

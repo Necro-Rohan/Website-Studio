@@ -19,7 +19,6 @@ function escapeHtml(str) {
 
 export const renderSeoBlogPage = async (req, res) => {
   try {
-    const post = await BlogPost.findOne({ slug: req.params.slug }).lean();
     
     const indexPath = path.resolve(__dirname, '../../../frontend/dist/index.html');
     let htmlData = fs.readFileSync(indexPath, 'utf8');
@@ -73,6 +72,8 @@ export const renderSeoBlogPage = async (req, res) => {
         return res.status(404).send(htmlData);
       }
     }
+
+    const post = await BlogPost.findOne({ slug: req.params.slug }).lean();
 
     if (post) {
       // Sanitization of Core Meta Data
