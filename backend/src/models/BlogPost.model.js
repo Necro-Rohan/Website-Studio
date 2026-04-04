@@ -14,6 +14,7 @@ const BlogPostSchema = new mongoose.Schema(
     h1: { type: String, required: true },
     coverImage: { type: String },
     images: { type: [mongoose.Schema.Types.Mixed], default: [] }, // for all imges
+    batchId: { type: String, index: true }, // to group related posts together during generation
 
     // THE NEW JSON OBJECT
     content: { type: Object, default: {} },
@@ -29,22 +30,30 @@ const BlogPostSchema = new mongoose.Schema(
     },
 
     internalLinks: {
-    sameCategory: [{ 
-      slug: { type: String }, 
-      h1: { type: String }, 
-      thumbnail: { type: String } 
-    }],
-    sameGeography: [{ 
-      slug: { type: String }, 
-      h1: { type: String }, 
-      thumbnail: { type: String } 
-    }],
-    crossCategory: [{ 
-      slug: { type: String }, 
-      h1: { type: String }, 
-      thumbnail: { type: String } 
-    }]
-  },
+      sameCategory: [
+        {
+          slug: { type: String },
+          h1: { type: String },
+          thumbnail: { type: String },
+        },
+      ],
+      sameGeography: [
+        {
+          slug: { type: String },
+          h1: { type: String },
+          thumbnail: { type: String },
+        },
+      ],
+      crossCategory: [
+        {
+          slug: { type: String },
+          h1: { type: String },
+          thumbnail: { type: String },
+        },
+      ],
+    },
+    categorySlug: { type: String, index: true },
+    geographySlug: { type: String, index: true },
   },
   { timestamps: true },
 );

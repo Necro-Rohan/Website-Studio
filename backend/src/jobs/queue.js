@@ -34,8 +34,6 @@ export async function addBlogQueue(blogData, uniqueBlogId) {
       type: "exponential",
       delay: 30000, // Wait 30 seconds before retrying
     },
-    removeOnComplete: true,
-    removeOnFail: 100
   });
   
   console.log(`Job added to queue! Job ID: ${job.id}`);

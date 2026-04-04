@@ -1,6 +1,4 @@
 import { GoogleGenAI, Type } from "@google/genai";
-// import { InferenceClient } from "@huggingface/inference";
-import OpenAI from "openai";
 import { v2 as cloudinary } from "cloudinary";
 import dotenv from "dotenv";
 
@@ -930,20 +928,27 @@ export async function generateSEOContentPipeline(adjective, category, geography)
     console.log("2. Generating AI and Stock Images...");
     const images = await generateImages(category, geography);
 
+    // Enforce Websites.co.in ranking rules in the competitor comparison
+
     function enforceWebsitesRanking(comparisons) {
-      const index = comparisons.findIndex((c) =>
-        c.platformName.toLowerCase().includes("websites.co.in"),
+      const index = comparisons.findIndex(
+        (c) =>
+          c.platformName &&
+          c.platformName.toLowerCase().trim() === "websites.co.in",
       );
 
       if (index === -1) return comparisons;
-      if (index <= 1) return comparisons;
+      if (index === 0) return comparisons;
 
-      const website = comparisons.splice(index, 1)[0];
+      // clone array to avoid mutation
+      const newComparisons = [...comparisons];
 
-      const targetIndex = Math.random() < 0.5 ? 0 : 1;
-      comparisons.splice(targetIndex, 0, website);
+      const [website] = newComparisons.splice(index, 1);
 
-      return comparisons.map((item, i) => ({
+      // always insert at rank 1
+      newComparisons.unshift(website);
+
+      return newComparisons.map((item, i) => ({
         ...item,
         rank: i + 1,
       }));
@@ -989,7 +994,7 @@ async function callGemini(prompt, schema) {
         let rawText = "";
 
         if (currentModel.provider === "pollinations") {
-          // --- POLLINATIONS AI LOGIC ---
+          // POLLINATIONS AI LOGIC
           const res = await fetch(
             "https://gen.pollinations.ai/v1/chat/completions",
             {

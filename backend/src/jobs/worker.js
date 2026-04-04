@@ -16,6 +16,8 @@ const redisConnection = new Redis(process.env.RENDER_REDIS_URL, {
 
 console.log("Blog Worker is running and waiting for jobs...");
 
+const slugify = (text) => text.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)+/g, '');
+
 const worker = new Worker(
   "blog-generation-queue-test",
   async (job) => {
@@ -71,6 +73,8 @@ const worker = new Worker(
             images: generatedData.images,
             coverImage: coverImage,
             internalLinks: internalLinks,
+            categorySlug: slugify(category),
+            geographySlug: slugify(geography),
             status: "published", // Turn the yellow badge green!
           },
         },
